@@ -8,14 +8,12 @@ import {
   Code2,
   Copy,
   Cpu,
-  ExternalLink,
   Github,
   Layers3,
   Linkedin,
   Mail,
   MapPin,
   Menu,
-  Plus,
   Terminal,
   TestTube2,
   X,
@@ -43,12 +41,18 @@ const projectImages: Record<"helpDesk" | "elderWatch" | "promoSearch", string | 
   promoSearch: undefined,
 };
 
+// Drop final iPhone screenshot URLs here; the existing device frames will render them without layout changes.
+const gapScreenshots: Record<"coreFlow" | "context" | "recommendation", string | undefined> = {
+  coreFlow: undefined,
+  context: undefined,
+  recommendation: undefined,
+};
+
 const navItems = [
   { label: "Overview", href: "#hero", testId: "nav-link-overview" },
   { label: "Gap", href: "#gap-centerpiece", testId: "nav-link-gap" },
   { label: "Projects", href: "#featured-projects", testId: "nav-link-projects" },
   { label: "Experience", href: "#experience", testId: "nav-link-experience" },
-  { label: "Contact", href: "#contact", testId: "nav-link-contact" },
 ];
 
 const pathStages = [
@@ -128,7 +132,7 @@ function SectionLabel({ number, children, testId }: { number: string; children: 
   );
 }
 
-function PlaceholderScreen({ label, screen, accent, selected, onSelect }: { label: string; screen: string; accent: string; selected: boolean; onSelect: () => void }) {
+function PlaceholderScreen({ label, screen, accent, imageSrc, selected, onSelect }: { label: string; screen: string; accent: string; imageSrc?: string; selected: boolean; onSelect: () => void }) {
   return (
     <button
       type="button"
@@ -137,23 +141,27 @@ function PlaceholderScreen({ label, screen, accent, selected, onSelect }: { labe
       aria-pressed={selected}
       className={`group block w-full text-left transition-transform duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${selected ? "-translate-y-2" : "hover:-translate-y-1"}`}
     >
-      <div className={`iphone-frame iphone-${accent} ${selected ? "iphone-selected" : ""}`}>
+      <div className={`iphone-frame iphone-${accent} ${selected ? "iphone-selected" : ""}`} data-testid={`gap-${screen.toLowerCase().replaceAll(" ", "-")}-image-slot`}>
         <div className="iphone-island" aria-hidden="true" />
-        <div className="iphone-screen">
-          <div className="flex items-center justify-between text-[0.52rem] font-semibold text-white/75">
-            <span>9:41</span>
-            <span className="flex items-center gap-1"><span className="h-1.5 w-2.5 rounded-sm border border-white/60" /><span className="h-1.5 w-1 rounded-full bg-white/80" /></span>
-          </div>
-          <div className="mt-10 text-left">
-            <p className="font-mono text-[0.48rem] uppercase tracking-[0.16em] text-white/60">{label}</p>
-            <p className="mt-2 font-display text-lg leading-tight text-white">A little time is still time.</p>
-            <div className="mt-5 space-y-2">
-              <div className="h-12 rounded-xl border border-white/15 bg-white/10 p-2"><div className="h-1.5 w-2/3 rounded-full bg-white/65" /><div className="mt-2 h-1 w-1/2 rounded-full bg-white/25" /></div>
-              <div className="h-10 rounded-xl border border-white/15 bg-white/5 p-2"><div className="h-1.5 w-1/2 rounded-full bg-white/45" /><div className="mt-2 h-1 w-1/3 rounded-full bg-white/20" /></div>
+        {imageSrc ? (
+          <img src={imageSrc} alt={`${screen} screen from Gap`} className="iphone-screen block size-full object-cover" />
+        ) : (
+          <div className="iphone-screen">
+            <div className="flex items-center justify-between text-[0.52rem] font-semibold text-white/75">
+              <span>9:41</span>
+              <span className="flex items-center gap-1"><span className="h-1.5 w-2.5 rounded-sm border border-white/60" /><span className="h-1.5 w-1 rounded-full bg-white/80" /></span>
             </div>
+            <div className="mt-10 text-left">
+              <p className="font-mono text-[0.48rem] uppercase tracking-[0.16em] text-white/60">{label}</p>
+              <p className="mt-2 font-display text-lg leading-tight text-white">A little time is still time.</p>
+              <div className="mt-5 space-y-2">
+                <div className="h-12 rounded-xl border border-white/15 bg-white/10 p-2"><div className="h-1.5 w-2/3 rounded-full bg-white/65" /><div className="mt-2 h-1 w-1/2 rounded-full bg-white/25" /></div>
+                <div className="h-10 rounded-xl border border-white/15 bg-white/5 p-2"><div className="h-1.5 w-1/2 rounded-full bg-white/45" /><div className="mt-2 h-1 w-1/3 rounded-full bg-white/20" /></div>
+              </div>
+            </div>
+            <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-3 text-[0.48rem] text-white/55"><span>Gap</span><span>⌁</span></div>
           </div>
-          <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-3 text-[0.48rem] text-white/55"><span>Gap</span><span>⌁</span></div>
-        </div>
+        )}
       </div>
       <div className="mt-3 flex items-center justify-between gap-2 text-[0.64rem] font-semibold uppercase tracking-[0.12em] text-slate">
         <span data-testid={`gap-screenshot-${screen.toLowerCase().replaceAll(" ", "-")}-label`}>{screen}</span>
@@ -221,13 +229,13 @@ export default function Home() {
 
       <section id="hero" data-testid="hero-section" className="relative mx-auto flex min-h-[min(820px,100vh)] max-w-7xl items-end px-5 pb-20 pt-32 sm:px-8 sm:pb-24 lg:px-12 lg:pb-28">
         <div className="pointer-events-none absolute right-24 top-40 hidden h-px w-48 bg-vermilion/50 lg:block" aria-hidden="true" />
-        <div className="relative z-10 max-w-5xl">
+        <div className="relative z-10 max-w-6xl">
           <div data-testid="hero-eyebrow" className="mb-8 flex items-center gap-3 text-[0.67rem] font-semibold uppercase tracking-[0.19em] text-slate"><CircleDot className="size-3 text-vermilion" /> Software Engineering Student · Developer · Builder</div>
-          <h1 data-testid="hero-title" className="max-w-4xl font-display text-[clamp(3.35rem,9vw,8.5rem)] font-medium leading-[0.91] tracking-[-0.055em] text-ink">André Gustavo <span className="text-vermilion">Reitz</span> Fleischfresser</h1>
+          <h1 data-testid="hero-title" className="max-w-6xl font-display text-[clamp(3.35rem,9vw,8.5rem)] font-medium leading-[0.91] tracking-[-0.055em] text-ink">André Gustavo <span className="text-vermilion">Reitz</span> Fleischfresser</h1>
           <div className="mt-10 grid max-w-4xl gap-8 border-t border-slate-300 pt-7 sm:grid-cols-[1fr_1.25fr] sm:items-start">
             <p data-testid="hero-manifesto" className="max-w-xs text-lg font-medium leading-relaxed text-ink sm:text-xl">I like building things, experimenting, and learning by doing.</p>
             <div>
-              <p data-testid="hero-credibility" className="mb-4 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.13em] text-vermilion">Software Engineering @ PUCPR · iOS Automation QA @ Mitel</p>
+              <p data-testid="hero-credibility" className="mb-4 font-mono text-[0.65rem] font-semibold tracking-[0.13em] text-vermilion">Software Engineering @ PUCPR · iOS Automation QA @ Mitel</p>
               <p data-testid="hero-description" className="max-w-lg text-sm leading-7 text-slate sm:text-base">I build software by experimenting, testing ideas, and learning through real projects — from robotics and embedded systems to backend applications, automation and native iOS products.</p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href="#gap-centerpiece" data-testid="hero-view-work-button" className="group inline-flex items-center gap-3 bg-ink px-5 py-3.5 text-xs font-bold uppercase tracking-[0.13em] text-canvas transition-colors hover:bg-vermilion focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">View my work <ArrowDown className="size-4 transition-transform group-hover:translate-y-1" /></a>
@@ -256,13 +264,11 @@ export default function Home() {
               </div>
             </div>
             <div className="relative min-h-[25rem] sm:min-h-[34rem] lg:pt-8">
-              <div className="absolute -right-12 top-0 hidden font-mono text-[0.61rem] uppercase tracking-[0.14em] text-white/35 [writing-mode:vertical-rl] sm:block">Replace with real product screens</div>
               <div className="grid grid-cols-3 items-end gap-2 sm:gap-5">
-                <PlaceholderScreen label="Find a fit" screen="Core flow" accent="vermilion" selected={activeScreen === "Core flow"} onSelect={() => setActiveScreen("Core flow")} />
-                <div className="pb-9"><PlaceholderScreen label="Filter by context" screen="Context" accent="cobalt" selected={activeScreen === "Context"} onSelect={() => setActiveScreen("Context")} /></div>
-                <div className="pb-20"><PlaceholderScreen label="Pick for me" screen="Recommendation" accent="sage" selected={activeScreen === "Recommendation"} onSelect={() => setActiveScreen("Recommendation")} /></div>
+                <PlaceholderScreen label="Find a fit" screen="Core flow" accent="vermilion" imageSrc={gapScreenshots.coreFlow} selected={activeScreen === "Core flow"} onSelect={() => setActiveScreen("Core flow")} />
+                <div className="pb-9"><PlaceholderScreen label="Filter by context" screen="Context" accent="cobalt" imageSrc={gapScreenshots.context} selected={activeScreen === "Context"} onSelect={() => setActiveScreen("Context")} /></div>
+                <div className="pb-20"><PlaceholderScreen label="Pick for me" screen="Recommendation" accent="sage" imageSrc={gapScreenshots.recommendation} selected={activeScreen === "Recommendation"} onSelect={() => setActiveScreen("Recommendation")} /></div>
               </div>
-              <div data-testid="gap-placeholder-note" className="mt-8 flex items-start gap-3 border-t border-white/15 pt-4 text-[0.66rem] leading-5 text-white/45"><Plus className="mt-0.5 size-3 shrink-0 text-vermilion" /> Three replaceable placeholders — designed to hold the final Gap screenshots.</div>
             </div>
           </div>
           {caseStudyOpen && (
@@ -313,7 +319,7 @@ export default function Home() {
 
       <section data-testid="exploring-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]"><div><SectionLabel number="06" testId="exploring-label">Currently exploring</SectionLabel><h2 data-testid="exploring-title" className="max-w-sm font-display text-4xl leading-none tracking-[-0.04em] sm:text-5xl">What I’m exploring now.</h2></div><div className="grid border-t border-slate-300 sm:grid-cols-2">{["Swift & SwiftUI", "Native iOS development", "Product development", "Software architecture", "Cloud architecture", "Automated testing"].map((item, index) => <div key={item} data-testid={`exploring-item-${index + 1}`} className="flex items-center gap-4 border-b border-slate-200 py-5 text-sm font-semibold text-ink"><span className="font-mono text-[0.62rem] text-vermilion">0{index + 1}</span>{item}</div>)}</div></div></section>
 
-      <section id="contact" data-testid="contact-section" className="bg-vermilion text-white"><div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><SectionLabel number="07" testId="contact-label">Contact</SectionLabel><div className="grid gap-12 lg:grid-cols-[1fr_0.8fr] lg:items-end"><div><h2 data-testid="contact-title" className="max-w-2xl font-display text-6xl font-medium leading-[0.9] tracking-[-0.05em] sm:text-8xl">Have a good question<span className="text-ink">?</span></h2><p data-testid="contact-description" className="mt-8 max-w-md text-base leading-7 text-white/75">I’m always interested in thoughtful conversations about products, engineering and what we can learn by making something real.</p></div><div className="border-t border-white/30 pt-6"><p data-testid="contact-location" className="mb-6 flex items-center gap-2 text-sm text-white/70"><MapPin className="size-4" /> Curitiba, Paraná, Brazil · PUCPR</p><div className="flex flex-col gap-4"><a href={`mailto:${email}`} data-testid="contact-email-link" className="group flex items-center justify-between border-b border-white/35 pb-3 text-base font-semibold transition-colors hover:border-ink hover:text-ink"><span className="flex items-center gap-3"><Mail className="size-4" />{email}</span><ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></a><button type="button" onClick={copyEmail} data-testid="copy-email-button" className="flex items-center gap-3 self-start text-xs font-bold uppercase tracking-[0.14em] text-white/75 transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">{emailCopied ? <Check className="size-4" /> : <Copy className="size-4" />}{emailCopied ? "Copied" : "Copy email"}</button><div className="flex gap-5 pt-3"><a href={githubUrl} target="_blank" rel="noreferrer" data-testid="contact-github-link" className="flex items-center gap-2 text-sm font-semibold hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">GitHub <ArrowUpRight className="size-3" /></a><a href={linkedinUrl} target="_blank" rel="noreferrer" data-testid="contact-linkedin-link" className="flex items-center gap-2 text-sm font-semibold hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">LinkedIn <ArrowUpRight className="size-3" /></a></div></div></div></div></div></section>
+      <section id="contact" data-testid="contact-section" className="bg-vermilion text-white"><div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><SectionLabel number="07" testId="contact-label">Contact</SectionLabel><div className="grid gap-12 lg:grid-cols-[1fr_0.8fr] lg:items-end"><div><h2 data-testid="contact-title" className="max-w-2xl font-display text-6xl font-medium leading-[0.9] tracking-[-0.05em] sm:text-8xl">Have a good question<span className="text-ink">?</span></h2><p data-testid="contact-description" className="mt-8 max-w-md text-base leading-7 text-white/75">I’m always interested in thoughtful conversations about products, engineering and what we can learn by making something real.</p></div><div className="border-t border-white/30 pt-6"><p data-testid="contact-location" className="mb-6 flex items-center gap-2 text-sm text-white/70"><MapPin className="size-4" /> Curitiba, Paraná, Brazil</p><div className="flex flex-col gap-4"><a href={`mailto:${email}`} data-testid="contact-email-link" className="group flex items-center justify-between border-b border-white/35 pb-3 text-base font-semibold transition-colors hover:border-ink hover:text-ink"><span className="flex items-center gap-3"><Mail className="size-4" />{email}</span><ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></a><button type="button" onClick={copyEmail} data-testid="copy-email-button" className="flex items-center gap-3 self-start text-xs font-bold uppercase tracking-[0.14em] text-white/75 transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">{emailCopied ? <Check className="size-4" /> : <Copy className="size-4" />}{emailCopied ? "Copied" : "Copy email"}</button><div className="flex gap-5 pt-3"><a href={githubUrl} target="_blank" rel="noreferrer" data-testid="contact-github-link" className="flex items-center gap-2 text-sm font-semibold hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">GitHub <ArrowUpRight className="size-3" /></a><a href={linkedinUrl} target="_blank" rel="noreferrer" data-testid="contact-linkedin-link" className="flex items-center gap-2 text-sm font-semibold hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">LinkedIn <ArrowUpRight className="size-3" /></a></div></div></div></div></div></section>
 
       <footer data-testid="site-footer" className="bg-ink text-white/55"><div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-7 text-[0.65rem] uppercase tracking-[0.14em] sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12"><span data-testid="footer-name">André Gustavo Reitz Fleischfresser</span><span data-testid="footer-note" className="flex items-center gap-2"><Terminal className="size-3 text-vermilion" /> Built by learning through doing</span></div></footer>
     </main>
