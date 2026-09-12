@@ -16,7 +16,7 @@
     --color-surface-alt: #f3f3ef;
     --color-ink: #0f172a;
     --color-slate: #64748b;
-    --color-vermilion: #d94a26;
+    --color-vermilion: #2f6f6d;
     --color-cobalt: #1d4ed8;
     --color-sage: #2d4a3e;
     --color-sidebar-ring: var(--sidebar-ring);
@@ -141,7 +141,7 @@
     scroll-behavior: smooth;
     }
   ::selection {
-    background: #d94a26;
+    background: #2f6f6d;
     color: #ffffff;
     }
 }
@@ -174,7 +174,7 @@
 .iphone-frame:hover,
 .iphone-selected {
   border-color: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 30px 52px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(217, 74, 38, 0.2);
+  box-shadow: 0 30px 52px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(47, 111, 109, 0.2);
 }
 
 .iphone-cobalt { background: linear-gradient(145deg, #334a75, #111827 62%, #526f9c); }
@@ -198,7 +198,7 @@
   flex-direction: column;
   overflow: hidden;
   border-radius: 1.28rem;
-  background: linear-gradient(145deg, rgba(211, 74, 38, 0.92), rgba(83, 35, 30, 0.96) 55%, rgba(15, 23, 42, 0.98));
+  background: linear-gradient(145deg, rgba(47, 111, 109, 0.92), rgba(29, 64, 65, 0.96) 55%, rgba(15, 23, 42, 0.98));
   padding: 1.1rem 0.8rem 0.8rem;
 }
 
