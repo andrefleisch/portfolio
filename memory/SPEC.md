@@ -12,6 +12,7 @@ Single-page personal portfolio for André Gustavo Reitz Fleischfresser. It prese
 - A concise More than projects. milestones section sits between How I build and Currently exploring, covering robotics mentoring/OBR results and academic performance at PUCPR.
 - The portfolio's connective narrative is learning by building: small trajectory copy, project learning dimensions, a reflective How I build paragraph, and a continuation note in Currently exploring connect experimentation, engineering, reliability and product thinking without adding a timeline.
 - Motion is lightweight and editorial: viewport reveals, drawing rules, sequenced Gap phones, active navigation markers, semantic project hover states, and one cursor-reactive hero line. How I build is the primary interaction, with scroll/tap-activated stages, a progressing connector, and carry-forward reflections. All motion respects `prefers-reduced-motion` and content remains visible before JavaScript initializes.
+- The hero-to-Gap thread is a compact editorial bridge. Other Projects uses three divided editorial columns on desktop and stacked rows on mobile. Currently exploring groups the existing interests into Native iOS & Product, Software Architecture, and Quality & Reliability.
 - Project repository links open the supplied GitHub repositories in a new tab.
 - Contact includes mailto, GitHub, LinkedIn and a copy-email button with a toast confirmation.
 - Mobile navigation collapses into a menu for iPhone-sized screens.

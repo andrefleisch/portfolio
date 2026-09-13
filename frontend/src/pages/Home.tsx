@@ -111,6 +111,21 @@ const smallerProjects = [
   },
 ];
 
+const exploringDirections = [
+  {
+    title: "Native iOS & Product",
+    description: "Swift, SwiftUI, native iOS development and product development.",
+  },
+  {
+    title: "Software Architecture",
+    description: "Software architecture and cloud architecture.",
+  },
+  {
+    title: "Quality & Reliability",
+    description: "Automated testing and deeper engineering reliability.",
+  },
+];
+
 function ExternalProjectLink({ href, children, testId }: { href: string; children: React.ReactNode; testId: string }) {
   return (
     <a
@@ -195,7 +210,7 @@ export default function Home() {
           revealObserver.unobserve(entry.target);
         }
       }),
-      { threshold: 0.01, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.01, rootMargin: "0px" },
     );
     revealTargets.forEach((nodes, target) => {
       const bounds = target.getBoundingClientRect();
@@ -307,7 +322,7 @@ export default function Home() {
         )}
       </header>
 
-      <section id="hero" data-testid="hero-section" onPointerMove={handleHeroPointerMove} onPointerLeave={handleHeroPointerLeave} className="relative mx-auto flex min-h-[min(820px,100vh)] max-w-7xl items-end px-5 pb-20 pt-32 sm:px-8 sm:pb-24 lg:px-12 lg:pb-28">
+      <section id="hero" data-testid="hero-section" onPointerMove={handleHeroPointerMove} onPointerLeave={handleHeroPointerLeave} className="relative mx-auto flex min-h-[min(820px,100vh)] max-w-7xl items-end px-5 pb-8 pt-32 sm:px-8 sm:pb-10 lg:px-12 lg:pb-12">
         <div ref={ambientLineRef} className="hero-ambient-line pointer-events-none absolute right-24 top-40 hidden h-px w-48 bg-vermilion/50 lg:block" aria-hidden="true" />
         <div className="relative z-10 max-w-6xl">
           <div data-testid="hero-eyebrow" data-reveal="metadata" className="mb-8 flex items-center gap-3 text-[0.67rem] font-semibold uppercase tracking-[0.19em] text-slate"><CircleDot className="size-3 text-vermilion" /> Software Engineering Student · Developer · Builder</div>
@@ -324,7 +339,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div data-reveal="copy" data-reveal-delay="260" className="mt-20 flex items-center gap-3 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate"><span className="h-10 w-px bg-vermilion" aria-hidden="true" /> Follow the thread: experimentation → engineering → reliability → product thinking</div>
+          <div data-testid="hero-thread-bridge" data-reveal="copy" data-reveal-delay="260" className="mt-9 flex items-center gap-3 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate"><span className="h-6 w-px bg-vermilion" aria-hidden="true" /> Follow the thread: experimentation → engineering → reliability → product thinking</div>
         </div>
       </section>
 
@@ -386,7 +401,25 @@ export default function Home() {
       </section>
 
       <section data-testid="other-projects-section" className="border-y border-slate-200 bg-surface-alt">
-        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-12"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]"><div><SectionLabel number="03" testId="other-projects-label">Other projects</SectionLabel><p data-testid="other-projects-intro" className="max-w-xs text-sm leading-7 text-slate">Smaller experiments, collaborations and iterations that keep the learning moving.</p></div><div className="divide-y divide-slate-300 border-t border-slate-300">{smallerProjects.map((project, index) => <a key={project.title} href={project.link} target="_blank" rel="noreferrer" data-testid={`other-project-${index + 1}-link`} className="other-project-link group grid gap-3 py-6 transition-colors hover:text-vermilion sm:grid-cols-[0.4fr_1fr_auto] sm:items-start sm:gap-8"><span data-testid={`other-project-${index + 1}-discipline`} className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-slate">{project.discipline}</span><span><span data-testid={`other-project-${index + 1}-title`} className="block font-display text-2xl text-ink transition-colors group-hover:text-vermilion">{project.title}</span><span data-testid={`other-project-${index + 1}-description`} className="mt-1 block max-w-lg text-sm leading-6 text-slate">{project.description}</span></span><ArrowUpRight aria-hidden="true" className="hidden size-5 text-ink transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 sm:block" /></a>)}</div></div></div>
+        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+          <div className="mb-10 grid gap-5 sm:grid-cols-[0.7fr_1.3fr] sm:items-end">
+            <SectionLabel number="03" testId="other-projects-label">Other projects</SectionLabel>
+            <p data-testid="other-projects-intro" data-reveal="copy" className="max-w-md text-sm leading-7 text-slate">Smaller experiments, collaborations and iterations that keep the learning moving.</p>
+          </div>
+          <div data-testid="other-projects-grid" data-reveal="copy" data-reveal-delay="100" className="grid divide-y divide-slate-300 border-y border-slate-300 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+            {smallerProjects.map((project, index) => (
+              <a key={project.title} href={project.link} target="_blank" rel="noreferrer" data-testid={`other-project-${index + 1}-link`} className="other-project-link group relative flex min-h-64 flex-col py-8 transition-colors lg:min-h-72 lg:px-8 lg:first:pl-0 lg:last:pr-0">
+                <div className="flex items-center justify-between gap-4">
+                  <span data-testid={`other-project-${index + 1}-index`} className="font-mono text-[0.62rem] font-semibold tracking-[0.16em] text-vermilion">0{index + 1}</span>
+                  <span data-testid={`other-project-${index + 1}-discipline`} className="text-right font-mono text-[0.62rem] uppercase tracking-[0.14em] text-slate">{project.discipline}</span>
+                </div>
+                <h3 data-testid={`other-project-${index + 1}-title`} className="mt-8 font-display text-3xl leading-tight text-ink transition-colors group-hover:text-vermilion">{project.title}</h3>
+                <p data-testid={`other-project-${index + 1}-description`} className="mt-4 max-w-sm text-sm leading-6 text-slate">{project.description}</p>
+                <ArrowUpRight aria-hidden="true" className="mt-auto size-5 self-end text-ink transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+              </a>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section id="experience" data-testid="experience-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36">
@@ -400,7 +433,7 @@ export default function Home() {
 
       <section data-testid="milestones-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32"><SectionLabel number="06" testId="milestones-label">Milestones</SectionLabel><div className="mb-14 grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-end"><h2 data-testid="milestones-title" className="max-w-2xl font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-7xl">More than projects.</h2><p data-testid="milestones-intro" className="max-w-md text-sm leading-7 text-slate">A couple of milestones that shaped how I learn, lead and build.</p></div><div className="divide-y divide-slate-200 border-y border-slate-200"><article data-testid="milestone-robotics" className="grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.22fr_0.62fr_1fr] lg:gap-12"><div data-testid="milestone-robotics-number" className="font-mono text-[0.68rem] font-semibold tracking-[0.16em] text-vermilion">01</div><div><h3 data-testid="milestone-robotics-title" className="font-display text-4xl leading-none text-ink sm:text-5xl">Robotics</h3><p data-testid="milestone-robotics-achievement" className="mt-4 font-display text-2xl leading-tight text-ink">2× 2nd place at OBR</p></div><div><p data-testid="milestone-robotics-description" className="max-w-xl text-sm leading-7 text-slate">I worked as a robotics instructor and mentor during my internship, helping prepare and guide a team for the Brazilian Robotics Olympiad.</p><div className="mt-6 grid gap-3 border-t border-slate-200 pt-5 text-sm font-semibold text-ink sm:grid-cols-2"><span data-testid="milestone-robotics-pista"><span className="mr-2 text-vermilion">/</span>2nd place — OBR Pista</span><span data-testid="milestone-robotics-artistica"><span className="mr-2 text-vermilion">/</span>2nd place — OBR Artística</span><span data-testid="milestone-robotics-national"><span className="mr-2 text-vermilion">/</span>Qualified for the national stage in OBR Artística</span></div></div></article><article data-testid="milestone-academic" className="grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.22fr_0.62fr_1fr] lg:gap-12"><div data-testid="milestone-academic-number" className="font-mono text-[0.68rem] font-semibold tracking-[0.16em] text-vermilion">02</div><div><h3 data-testid="milestone-academic-title" className="font-display text-4xl leading-none text-ink sm:text-5xl">Academic</h3><p data-testid="milestone-academic-achievement" className="mt-4 font-display text-2xl leading-tight text-ink">IRA 91 / 100</p></div><div className="flex items-start"><p data-testid="milestone-academic-description" className="text-sm font-semibold leading-7 text-slate">Software Engineering · PUCPR</p></div></article></div></section>
 
-      <section data-testid="exploring-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]"><div><SectionLabel number="07" testId="exploring-label">Currently exploring</SectionLabel><h2 data-testid="exploring-title" data-reveal="mask" className="max-w-sm font-display text-4xl leading-none tracking-[-0.04em] sm:text-5xl">What I’m exploring now.</h2><p data-testid="exploring-intro" data-reveal="copy" data-reveal-delay="100" className="mt-6 max-w-sm text-sm leading-7 text-slate">Where previous projects lead, and what I’m curious about next.</p></div><div className="grid border-t border-slate-300" data-reveal="copy" data-reveal-delay="140"><div className="exploring-rule" aria-hidden="true" />{["Swift & SwiftUI", "Native iOS development", "Product development", "Software architecture", "Cloud architecture", "Automated testing"].map((item, index) => <div key={item} data-testid={`exploring-item-${index + 1}`} className="flex items-center gap-4 border-b border-slate-200 py-5 text-sm font-semibold text-ink"><span className="font-mono text-[0.62rem] text-vermilion">0{index + 1}</span>{item}</div>)}</div></div></section>
+      <section data-testid="exploring-section" className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24"><div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr]"><div><SectionLabel number="07" testId="exploring-label">Currently exploring</SectionLabel><h2 data-testid="exploring-title" data-reveal="mask" className="max-w-sm font-display text-4xl leading-none tracking-[-0.04em] sm:text-5xl">What I’m exploring now.</h2><p data-testid="exploring-intro" data-reveal="copy" data-reveal-delay="100" className="mt-5 max-w-sm text-sm leading-7 text-slate">Where previous projects lead, and what I’m curious about next.</p></div><div className="grid border-t border-slate-300" data-reveal="copy" data-reveal-delay="140"><div className="exploring-rule" aria-hidden="true" />{exploringDirections.map((direction, index) => <div key={direction.title} data-testid={`exploring-direction-${index + 1}`} className="grid gap-2 border-b border-slate-200 py-5 sm:grid-cols-[0.72fr_1.28fr] sm:gap-8"><div className="flex items-baseline gap-4"><span data-testid={`exploring-direction-${index + 1}-index`} className="font-mono text-[0.62rem] text-vermilion">0{index + 1}</span><h3 data-testid={`exploring-direction-${index + 1}-title`} className="font-display text-xl text-ink">{direction.title}</h3></div><p data-testid={`exploring-direction-${index + 1}-description`} className="text-sm leading-6 text-slate">{direction.description}</p></div>)}</div></div></section>
 
       <section id="contact" data-testid="contact-section" data-color-section="dark" className="dark-section border-b border-white/10 bg-ink text-canvas"><div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><SectionLabel number="08" testId="contact-label" className="text-cobalt" accentClassName="text-cobalt">Contact</SectionLabel><div className="grid gap-12 lg:grid-cols-[1fr_0.8fr] lg:items-end"><div><h2 data-testid="contact-title" className="max-w-2xl font-display text-6xl font-medium leading-[0.9] tracking-[-0.05em] text-canvas sm:text-8xl">Have a good question<span className="text-cobalt">?</span></h2><p data-testid="contact-description" className="mt-8 max-w-md text-base leading-7 text-white/70">I’m always interested in thoughtful conversations about products, engineering and what we can learn by making something real.</p></div><div className="border-t border-white/20 pt-6"><p data-testid="contact-location" className="mb-6 flex items-center gap-2 text-sm text-white/65"><MapPin className="size-4 text-cobalt" /> Curitiba, Paraná, Brazil</p><div className="flex flex-col gap-4"><a href={`mailto:${email}`} data-testid="contact-email-link" className="group flex items-center justify-between border-b border-white/30 pb-3 text-base font-semibold transition-colors hover:border-cobalt hover:text-cobalt"><span className="flex items-center gap-3"><Mail className="size-4 text-cobalt" />{email}</span><ArrowUpRight className="size-4 text-cobalt transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></a><button type="button" onClick={copyEmail} data-testid="copy-email-button" className="flex items-center gap-3 self-start text-xs font-bold uppercase tracking-[0.14em] text-white/70 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">{emailCopied ? <Check className="size-4 text-cobalt" /> : <Copy className="size-4 text-cobalt" />}{emailCopied ? "Copied" : "Copy email"}</button><div className="flex gap-5 pt-3"><a href={githubUrl} target="_blank" rel="noreferrer" data-testid="contact-github-link" className="flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">GitHub <ArrowUpRight className="size-3 text-cobalt" /></a><a href={linkedinUrl} target="_blank" rel="noreferrer" data-testid="contact-linkedin-link" className="flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">LinkedIn <ArrowUpRight className="size-3 text-cobalt" /></a></div></div></div></div></div></section>
 
