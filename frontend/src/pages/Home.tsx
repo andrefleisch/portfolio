@@ -149,9 +149,9 @@ function GapScreen({ label, screen, imageAlt, prominent = false, revealDelay, se
       <div className={`iphone-frame ${prominent ? "iphone-prominent" : ""} ${selected ? "iphone-selected" : ""}`} data-testid={`gap-${screen.toLowerCase().replaceAll(" ", "-")}-image-slot`}>
         <img src={gapScreenshots[screen === "Home" ? "coreFlow" : screen === "Smart recommendation" ? "recommendation" : "context"]} alt={imageAlt} className="iphone-image" loading="eager" decoding="sync" />
       </div>
-      <div className="mt-3 flex items-center justify-between gap-2 text-[0.64rem] font-semibold uppercase tracking-[0.12em] text-slate">
+      <div className={`mt-3 flex items-center justify-between gap-2 text-[0.64rem] font-semibold uppercase tracking-[0.12em] ${prominent ? "text-white/85" : "text-white/60"}`}>
         <span data-testid={`gap-screenshot-${screen.toLowerCase().replaceAll(" ", "-")}-label`}>{label}</span>
-        <span className={`h-1.5 w-1.5 rounded-full ${selected ? "bg-vermilion" : "bg-slate-300"}`} aria-hidden="true" />
+        <span className={`h-1.5 w-1.5 rounded-full ${selected ? "bg-vermilion" : "bg-white/35"}`} aria-hidden="true" />
       </div>
     </button>
   );
@@ -354,10 +354,10 @@ export default function Home() {
               </div>
             </div>
             <div className="relative min-h-[25rem] sm:min-h-[34rem] lg:pt-8">
-              <div className="grid grid-cols-[0.94fr_1.12fr_0.94fr] items-end gap-2 sm:gap-5">
-                <GapScreen label={t.gap.screens[0]} imageAlt={t.gap.screenAlts[0]} screen="Home" revealDelay={100} selected={activeScreen === "Home"} onSelect={() => setActiveScreen("Home")} />
-                <div className="pb-9"><GapScreen label={t.gap.screens[1]} imageAlt={t.gap.screenAlts[1]} screen="Smart recommendation" revealDelay={0} prominent selected={activeScreen === "Smart recommendation"} onSelect={() => setActiveScreen("Smart recommendation")} /></div>
-                <div className="pb-20"><GapScreen label={t.gap.screens[2]} imageAlt={t.gap.screenAlts[2]} screen="New task" revealDelay={180} selected={activeScreen === "New task"} onSelect={() => setActiveScreen("New task")} /></div>
+              <div className="grid grid-cols-3 items-start gap-2 sm:gap-5">
+                <div className="pt-6"><GapScreen label={t.gap.screens[0]} imageAlt={t.gap.screenAlts[0]} screen="Home" revealDelay={100} selected={activeScreen === "Home"} onSelect={() => setActiveScreen("Home")} /></div>
+                <GapScreen label={t.gap.screens[1]} imageAlt={t.gap.screenAlts[1]} screen="Smart recommendation" revealDelay={0} prominent selected={activeScreen === "Smart recommendation"} onSelect={() => setActiveScreen("Smart recommendation")} />
+                <div className="pt-8"><GapScreen label={t.gap.screens[2]} imageAlt={t.gap.screenAlts[2]} screen="New task" revealDelay={180} selected={activeScreen === "New task"} onSelect={() => setActiveScreen("New task")} /></div>
               </div>
             </div>
           </div>

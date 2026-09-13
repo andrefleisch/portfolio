@@ -363,7 +363,7 @@
 
 .iphone-frame {
   position: relative;
-  width: min(100%, 12rem);
+  width: min(92.5%, 12rem);
   height: auto;
   margin-inline: auto;
   padding: 0.42rem;
