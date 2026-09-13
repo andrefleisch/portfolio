@@ -27,6 +27,7 @@ const email = "andrefleisch2@gmail.com";
 
 const projectLinks = {
   gap: "https://github.com/andrefleisch/Gap",
+  gapCaseStudy: "https://github.com/andrefleisch/Gap/blob/main/CASE_STUDY.md",
   helpDesk: "https://github.com/andrefleisch/HelpDesk",
   elderWatch: "https://github.com/andrefleisch/Elder-Watch",
   promoSearch: "https://github.com/andrefleisch/PromoSearch",
@@ -373,7 +374,7 @@ export default function Home() {
             <div data-testid="gap-case-study-panel" className="mt-20 border-t border-white/15 pt-10 animate-in fade-in duration-300">
               <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr]">
                 <div><p data-testid="gap-case-study-label" className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-vermilion">{t.gap.caseLabel}</p><h3 data-testid="gap-case-study-title" className="mt-4 font-display text-3xl text-white sm:text-4xl">{t.gap.caseTitle}</h3></div>
-                <div className="grid gap-8 sm:grid-cols-2"><p data-testid="gap-case-study-story" className="text-sm leading-7 text-white/65">{t.gap.caseStory}</p><div><p data-testid="gap-case-study-features-label" className="mb-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/40">{t.gap.explores}</p><ul className="space-y-3 text-sm text-white/75">{t.gap.features.map((item, index) => <li key={item} data-testid={`gap-feature-${index + 1}`} className="flex items-start gap-2"><Check className="mt-0.5 size-4 shrink-0 text-vermilion" />{item}</li>)}</ul></div></div>
+                <div className="grid gap-8 sm:grid-cols-2"><div><p data-testid="gap-case-study-story" className="text-sm leading-7 text-white/65">{t.gap.caseStory}</p><a href={projectLinks.gapCaseStudy} target="_blank" rel="noreferrer" data-testid="gap-full-case-study-link" className="group mt-5 inline-flex items-center gap-2 border-b border-white/35 pb-1 text-xs font-bold uppercase tracking-[0.13em] text-white transition-colors hover:border-vermilion hover:text-vermilion focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-canvas">{t.gap.fullCaseStudy}<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></a></div><div><p data-testid="gap-case-study-features-label" className="mb-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/40">{t.gap.explores}</p><ul className="space-y-3 text-sm text-white/75">{t.gap.features.map((item, index) => <li key={item} data-testid={`gap-feature-${index + 1}`} className="flex items-start gap-2"><Check className="mt-0.5 size-4 shrink-0 text-vermilion" />{item}</li>)}</ul></div></div>
               </div>
             </div>
           )}
