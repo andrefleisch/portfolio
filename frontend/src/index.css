@@ -361,13 +361,33 @@
 .font-display { font-family: 'Playfair Display Variable', serif; }
 .font-mono { font-family: 'IBM Plex Mono', monospace; }
 
+.gap-phone-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 0.5rem;
+}
+
+.gap-phone-slot {
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.gap-phone-slot-focal {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0.45rem;
+}
+
 .iphone-frame {
   position: relative;
-  width: min(92.5%, 12rem);
-  height: auto;
+  width: min(90%, 11.35rem);
+  aspect-ratio: 1320 / 2868;
   margin-inline: auto;
   padding: 0.42rem;
-  overflow: visible;
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 1.65rem;
   background: #111827;
@@ -382,7 +402,7 @@
 }
 
 .iphone-prominent {
-  width: min(100%, 12rem);
+  width: min(100%, 12.15rem);
 }
 
 .iphone-prominent:hover,
@@ -393,13 +413,21 @@
 .iphone-image {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: none;
+  height: 100%;
+  min-height: 0;
   border-radius: 1.28rem;
   object-fit: contain;
   object-position: center;
 }
 
+@media (min-width: 640px) {
+  .gap-phone-grid { gap: 1.1rem; }
+}
+
 @media (max-width: 640px) {
-  .iphone-frame { border-radius: 1.1rem; padding: 0.28rem; }
+  .gap-phone-grid { gap: 0.35rem; }
+  .gap-phone-slot-focal { margin-bottom: 0.2rem; }
+  .iphone-frame { width: 94%; border-radius: 1.1rem; padding: 0.28rem; }
+  .iphone-prominent { width: 100%; }
+  .iphone-image { border-radius: 0.9rem; }
 }
