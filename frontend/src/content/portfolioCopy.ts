@@ -173,7 +173,7 @@ export const portfolioCopy = {
       caseTitle: "Da filtragem por tempo a menos atrito na decisão.",
       caseStory: "Gap evoluiu por meio de entrevistas com usuários e iteração. O que começou principalmente como um filtro por tempo se expandiu quando a pesquisa mostrou que contexto, dificuldade de decisão e prioridade também importavam.",
       explores: "O que o projeto explora",
-      features: ["Janelas de 5–30 minutos", "Contextos e prioridades", "Recomendações Escolha por Mim", "Histórico de tarefas e Tempo Recuperado"],
+      features: ["Janelas de 5–30 minutos", "Contextos e prioridades", "Recomendações do “Escolha por Mim”", "Histórico de tarefas concluídas e tempo recuperado"],
     },
     featured: {
       sectionLabel: "Trabalhos selecionados",
@@ -203,7 +203,7 @@ export const portfolioCopy = {
       label: "Outros projetos",
       intro: "Experimentos menores, colaborações e iterações que mantêm o aprendizado em movimento.",
       descriptions: [
-        "Um habit tracker full stack focado em check-ins, sequências, cálculo de consistência e operações idempotentes.",
+        "Um habit tracker full stack focado em check-ins, sequências de dias, cálculo de consistência e operações idempotentes.",
         "Um projeto universitário colaborativo em Python para organizar filas de jogadores de tênis de mesa e o histórico de partidas.",
         "Uma implementação desktop menor em Java/JavaFX relacionada ao conceito do PromoSearch.",
       ],
@@ -224,7 +224,7 @@ export const portfolioCopy = {
         { title: "Robótica & sistemas embarcados", text: "A robótica me ensinou a experimentar com sistemas físicos, nos quais o software precisa responder a restrições reais.", carry: "Aprender por meio da experimentação e do feedback imediato." },
         { title: "Backend & full stack", text: "O desenvolvimento backend me ensinou a pensar em arquitetura, regras de negócio, dados e nos contratos entre eles.", carry: "Pensar em estrutura, arquitetura e regras de negócio." },
         { title: "Automação profissional", text: "A automação de testes me ensinou a cuidar da confiabilidade, da manutenibilidade e dos casos extremos que moldam um produto.", carry: "Procurar casos extremos, confiabilidade e modos de falha." },
-        { title: "iOS nativo & produto", text: "Construir apps nativos para iOS está me ensinando mais sobre decisões de produto e sobre a relação entre tecnologia e usuário.", carry: "Pensar mais perto do usuário e iterar sobre decisões reais de produto." },
+        { title: "iOS nativo & produto", text: "Construir apps nativos para iOS está me ensinando mais sobre decisões de produto e sobre a relação entre tecnologia e usuário.", carry: "Colocar o usuário no centro e iterar sobre decisões reais de produto." },
       ],
     },
     milestones: {
@@ -242,7 +242,7 @@ export const portfolioCopy = {
     exploring: {
       label: "Explorando agora",
       title: "O que estou explorando agora.",
-      intro: "Onde os projetos anteriores me trouxeram e o que desperta minha curiosidade agora.",
+      intro: "Os caminhos abertos pelos projetos anteriores e o que desperta minha curiosidade agora.",
       directions: [
         { title: "iOS nativo & Produto", description: "Swift, SwiftUI, desenvolvimento nativo para iOS e desenvolvimento de produto." },
         { title: "Arquitetura de Software", description: "Arquitetura de software e arquitetura de nuvem." },
@@ -252,7 +252,7 @@ export const portfolioCopy = {
     contact: {
       label: "Contato",
       title: "Tem uma boa pergunta",
-      description: "Sempre me interesso por conversas cuidadosas sobre produtos, engenharia e o que podemos aprender ao construir algo real.",
+      description: "Tenho interesse em conversas sobre produtos, engenharia e sobre como podemos aprender ao construir algo real.",
       location: "Curitiba, Paraná, Brasil",
       copyEmail: "Copiar e-mail",
       copied: "Copiado",

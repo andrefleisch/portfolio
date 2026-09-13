@@ -151,9 +151,9 @@ function GapScreen({ label, screen, imageAlt, prominent = false, revealDelay, se
           <img src={gapScreenshots[screen === "Home" ? "coreFlow" : screen === "Smart recommendation" ? "recommendation" : "context"]} alt={imageAlt} className="iphone-image" loading="eager" decoding="sync" />
         </div>
       </div>
-      <div className={`mt-3 flex items-center justify-between gap-2 text-[0.64rem] font-semibold uppercase tracking-[0.12em] ${prominent ? "text-white/85" : "text-white/60"}`}>
+      <div className={`mt-3 flex min-h-[2rem] items-start justify-between gap-2 text-[0.64rem] font-semibold uppercase tracking-[0.12em] ${prominent ? "text-white/85" : "text-white/60"}`}>
         <span data-testid={`gap-screenshot-${screen.toLowerCase().replaceAll(" ", "-")}-label`}>{label}</span>
-        <span className={`h-1.5 w-1.5 rounded-full ${selected ? "bg-vermilion" : "bg-white/35"}`} aria-hidden="true" />
+        <span className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${selected ? "bg-vermilion" : "bg-white/35"}`} aria-hidden="true" />
       </div>
     </button>
   );
