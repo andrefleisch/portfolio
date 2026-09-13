@@ -43,9 +43,9 @@ const projectImages: Record<"helpDesk" | "elderWatch" | "promoSearch", string | 
 
 // Drop final iPhone screenshot URLs here; the existing device frames will render them without layout changes.
 const gapScreenshots: Record<"coreFlow" | "context" | "recommendation", string | undefined> = {
-  coreFlow: undefined,
-  context: undefined,
-  recommendation: undefined,
+  coreFlow: "https://customer-assets-v7afamib.emergentagent.net/job_andre-products/artifacts/qvfooj6b_home.webp",
+  context: "https://customer-assets-v7afamib.emergentagent.net/job_andre-products/artifacts/1v9mc6j3_Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20Max%20-%202026-09-07%20at%2023.44.34.webp",
+  recommendation: "https://customer-assets-v7afamib.emergentagent.net/job_andre-products/artifacts/vi0pzsrh_Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20Max%20-%202026-09-07%20at%2023.43.01.webp",
 };
 
 const navItems = [
@@ -132,7 +132,7 @@ function SectionLabel({ number, children, testId }: { number: string; children: 
   );
 }
 
-function PlaceholderScreen({ label, screen, accent, imageSrc, selected, onSelect }: { label: string; screen: string; accent: string; imageSrc?: string; selected: boolean; onSelect: () => void }) {
+function PlaceholderScreen({ label, screen, accent, imageSrc, prominent = false, selected, onSelect }: { label: string; screen: string; accent: string; imageSrc?: string; prominent?: boolean; selected: boolean; onSelect: () => void }) {
   return (
     <button
       type="button"
@@ -141,10 +141,10 @@ function PlaceholderScreen({ label, screen, accent, imageSrc, selected, onSelect
       aria-pressed={selected}
       className={`group block w-full text-left transition-transform duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${selected ? "-translate-y-2" : "hover:-translate-y-1"}`}
     >
-      <div className={`iphone-frame iphone-${accent} ${selected ? "iphone-selected" : ""}`} data-testid={`gap-${screen.toLowerCase().replaceAll(" ", "-")}-image-slot`}>
+      <div className={`iphone-frame iphone-${accent} ${prominent ? "iphone-prominent" : ""} ${selected ? "iphone-selected" : ""}`} data-testid={`gap-${screen.toLowerCase().replaceAll(" ", "-")}-image-slot`}>
         <div className="iphone-island" aria-hidden="true" />
         {imageSrc ? (
-          <img src={imageSrc} alt={`${screen} screen from Gap`} className="iphone-screen block size-full object-cover" />
+          <img src={imageSrc} alt={`${screen} screen from Gap`} className="iphone-image" loading="eager" decoding="sync" />
         ) : (
           <div className="iphone-screen">
             <div className="flex items-center justify-between text-[0.52rem] font-semibold text-white/75">
@@ -164,7 +164,7 @@ function PlaceholderScreen({ label, screen, accent, imageSrc, selected, onSelect
         )}
       </div>
       <div className="mt-3 flex items-center justify-between gap-2 text-[0.64rem] font-semibold uppercase tracking-[0.12em] text-slate">
-        <span data-testid={`gap-screenshot-${screen.toLowerCase().replaceAll(" ", "-")}-label`}>{screen}</span>
+        <span data-testid={`gap-screenshot-${screen.toLowerCase().replaceAll(" ", "-")}-label`}>{label}</span>
         <span className={`h-1.5 w-1.5 rounded-full ${selected ? "bg-vermilion" : "bg-slate-300"}`} aria-hidden="true" />
       </div>
     </button>
@@ -265,9 +265,9 @@ export default function Home() {
             </div>
             <div className="relative min-h-[25rem] sm:min-h-[34rem] lg:pt-8">
               <div className="grid grid-cols-3 items-end gap-2 sm:gap-5">
-                <PlaceholderScreen label="Find a fit" screen="Core flow" accent="vermilion" imageSrc={gapScreenshots.coreFlow} selected={activeScreen === "Core flow"} onSelect={() => setActiveScreen("Core flow")} />
-                <div className="pb-9"><PlaceholderScreen label="Filter by context" screen="Context" accent="cobalt" imageSrc={gapScreenshots.context} selected={activeScreen === "Context"} onSelect={() => setActiveScreen("Context")} /></div>
-                <div className="pb-20"><PlaceholderScreen label="Pick for me" screen="Recommendation" accent="sage" imageSrc={gapScreenshots.recommendation} selected={activeScreen === "Recommendation"} onSelect={() => setActiveScreen("Recommendation")} /></div>
+                <PlaceholderScreen label="START WITH TIME" screen="Home" accent="vermilion" imageSrc={gapScreenshots.coreFlow} selected={activeScreen === "Home"} onSelect={() => setActiveScreen("Home")} />
+                <div className="pb-9"><PlaceholderScreen label="SMART RECOMMENDATION" screen="Smart recommendation" accent="cobalt" imageSrc={gapScreenshots.recommendation} prominent selected={activeScreen === "Smart recommendation"} onSelect={() => setActiveScreen("Smart recommendation")} /></div>
+                <div className="pb-20"><PlaceholderScreen label="CONTEXT & PRIORITY" screen="New task" accent="sage" imageSrc={gapScreenshots.context} selected={activeScreen === "New task"} onSelect={() => setActiveScreen("New task")} /></div>
               </div>
             </div>
           </div>
