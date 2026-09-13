@@ -166,7 +166,7 @@
   padding: 0.42rem;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 1.65rem;
-  background: linear-gradient(145deg, #363b45, #13161d 62%, #454b57);
+  background: #111827;
   box-shadow: 0 26px 44px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255,255,255,0.08);
   transition: box-shadow 300ms ease, border-color 300ms ease;
 }
@@ -187,31 +187,6 @@
   transform: scale(1.08) translateY(-0.5rem);
 }
 
-.iphone-cobalt { background: linear-gradient(145deg, #334a75, #111827 62%, #526f9c); }
-.iphone-sage { background: linear-gradient(145deg, #4d6559, #14231d 62%, #6d8c7b); }
-
-.iphone-island {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  top: 0.72rem;
-  width: 34%;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: #080a0e;
-  transform: translateX(-50%);
-}
-
-.iphone-screen {
-  display: flex;
-  min-height: 100%;
-  flex-direction: column;
-  overflow: hidden;
-  border-radius: 1.28rem;
-  background: linear-gradient(145deg, rgba(47, 111, 109, 0.92), rgba(29, 64, 65, 0.96) 55%, rgba(15, 23, 42, 0.98));
-  padding: 1.1rem 0.8rem 0.8rem;
-}
-
 .iphone-image {
   display: block;
   width: 100%;
@@ -220,13 +195,8 @@
   object-fit: contain;
 }
 
-.iphone-cobalt .iphone-screen { background: linear-gradient(145deg, rgba(29, 78, 216, 0.95), rgba(26, 42, 82, 0.98) 55%, rgba(15, 23, 42, 0.98)); }
-.iphone-sage .iphone-screen { background: linear-gradient(145deg, rgba(45, 74, 62, 0.98), rgba(22, 48, 36, 0.98) 55%, rgba(15, 23, 42, 0.98)); }
-
 @media (max-width: 640px) {
   .iphone-frame { border-radius: 1.1rem; padding: 0.28rem; }
-  .iphone-screen { border-radius: 0.9rem; padding: 0.65rem 0.5rem 0.5rem; }
-  .iphone-island { top: 0.46rem; height: 0.32rem; }
   .iphone-prominent { transform: scale(1.04); }
   .iphone-prominent:hover,
   .iphone-prominent.iphone-selected { transform: scale(1.04) translateY(-0.35rem); }
