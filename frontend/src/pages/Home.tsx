@@ -144,7 +144,7 @@ function GapScreen({ label, screen, imageAlt, prominent = false, revealDelay, se
       data-reveal="phone"
       data-reveal-delay={revealDelay}
       aria-pressed={selected}
-      className={`gap-screen-button group block w-full text-left transition-transform duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${selected ? "gap-screen-selected" : "hover:-translate-y-1"}`}
+      className="gap-screen-button group block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
     >
       <div className={`iphone-frame ${prominent ? "iphone-prominent" : ""} ${selected ? "iphone-selected" : ""}`} data-testid={`gap-${screen.toLowerCase().replaceAll(" ", "-")}-image-slot`}>
         <img src={gapScreenshots[screen === "Home" ? "coreFlow" : screen === "Smart recommendation" ? "recommendation" : "context"]} alt={imageAlt} className="iphone-image" loading="eager" decoding="sync" />
@@ -354,7 +354,7 @@ export default function Home() {
               </div>
             </div>
             <div className="relative min-h-[25rem] sm:min-h-[34rem] lg:pt-8">
-              <div className="grid grid-cols-3 items-end gap-2 sm:gap-5">
+              <div className="grid grid-cols-[0.94fr_1.12fr_0.94fr] items-end gap-2 sm:gap-5">
                 <GapScreen label={t.gap.screens[0]} imageAlt={t.gap.screenAlts[0]} screen="Home" revealDelay={100} selected={activeScreen === "Home"} onSelect={() => setActiveScreen("Home")} />
                 <div className="pb-9"><GapScreen label={t.gap.screens[1]} imageAlt={t.gap.screenAlts[1]} screen="Smart recommendation" revealDelay={0} prominent selected={activeScreen === "Smart recommendation"} onSelect={() => setActiveScreen("Smart recommendation")} /></div>
                 <div className="pb-20"><GapScreen label={t.gap.screens[2]} imageAlt={t.gap.screenAlts[2]} screen="New task" revealDelay={180} selected={activeScreen === "New task"} onSelect={() => setActiveScreen("New task")} /></div>

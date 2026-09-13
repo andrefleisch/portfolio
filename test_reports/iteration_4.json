@@ -1,0 +1,48 @@
+{
+  "iteration": 4,
+  "summary": "New briefing focuses on the Gap section's center Smart Recommendation screenshot retaining full iPhone chrome (time 23:43, Dynamic Island/notch, Wi-Fi, battery, top border), all three screenshots rendering uncropped at natural 921:2000 ratio with object-fit contain, no hover/selection transform re-introducing cropping, and a balanced/responsive three-phone composition. Added 1 new browser check (gap-chrome-visible-no-hover-crop) directly asserting chrome visibility, natural-ratio preservation, and hover-stability of the image box/transform. Re-ran 3 pre-existing browser checks (gap-flagship-entrance, gap-screenshots-aspect-ratio-contain, mobile-and-reduced-motion-accessible) to confirm no regressions. All 4 checks passed; visual screenshot inspection confirms 23:43 time, notch, Wi-Fi and battery icons fully visible on the center phone with no overflow at desktop. No backend/API surface backs these purely visual/CSS criteria (static content-driven portfolio, consistent with prior iterations).",
+  "passed": 4,
+  "failed": 0,
+  "backend_note": "No app-specific backend endpoints back any of the 4 criteria in this briefing; no backend test files were added.",
+  "bugs": [],
+  "action_items": [],
+  "retest_needed": false,
+  "checks": [
+    {
+      "criterion": "O screenshot central Smart Recommendation exibe todo o chrome original do iPhone (horário 23:43, Dynamic Island/notch, Wi-Fi, bateria, borda superior)",
+      "name": "gap-chrome-visible-no-hover-crop",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Visual screenshot of gap-smart-recommendation-image-slot shows '23:43' time text, notch/pill shape, Wi-Fi and battery icons, and top border fully intact. Assertions: img.naturalWidth/Height>0, natural ratio ~921/2000 (within 10%), computed object-fit==='contain', rendered box ratio within 8% of natural ratio, ancestor frame overflow !== 'hidden'."
+    },
+    {
+      "criterion": "Os três screenshots do Gap ficam integralmente visíveis e sem distorção (contain, altura automática, sem corte)",
+      "name": "gap-screenshots-aspect-ratio-contain",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Re-run by name only (persisted script): all 3 slots visible, images loaded, object-fit=contain, overflow=visible, rendered ratio matches natural 921/2000 within 5% at desktop(1280x900) and mobile(390x844), no horizontal overflow at either viewport."
+    },
+    {
+      "criterion": "Nenhuma transformação de hover ou seleção volta a cortar os screenshots (após animação inicial estabilizar)",
+      "name": "gap-chrome-visible-no-hover-crop",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "After waiting for entrance reveal to settle and image to load, captured img computed transform/object-fit/bounding-box before and after hover on the center slot: object-fit remained 'contain', transform unchanged (or 'none'), bounding box width/height delta < 2px, confirming no re-crop on hover."
+    },
+    {
+      "criterion": "A composição de três telefones continua equilibrada e responsiva (central maior por largura de coluna, rótulos corretos, sem overflow em desktop e 390x844)",
+      "name": "gap-flagship-entrance",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Re-run by name only (persisted script): all 3 slots visible with valid img src/naturalWidth, iphone-prominent class only on Smart Recommendation slot, labels (START WITH TIME / SMART RECOMMENDATION / CONTEXT & PRIORITY) rendered correctly, New Task interactive button toggled aria-pressed=true."
+    }
+  ],
+  "regression_checks": [
+    {
+      "name": "mobile-and-reduced-motion-accessible",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Re-run by name only (persisted script): passed at mobile viewport with prefers-reduced-motion, no regressions."
+    }
+  ]
+}

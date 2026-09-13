@@ -195,8 +195,6 @@
 .motion-ready [data-reveal]:not(.is-revealed) .section-rule { transform: scaleX(0); }
 .motion-ready [data-reveal].is-revealed .section-rule { transform: scaleX(1); }
 
-.gap-screen-button.gap-screen-selected { transform: translateY(-0.5rem); }
-
 .hero-ambient-line {
   transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -384,13 +382,12 @@
 }
 
 .iphone-prominent {
-  transform: scale(1.08);
-  transform-origin: bottom center;
+  width: min(100%, 12rem);
 }
 
 .iphone-prominent:hover,
 .iphone-prominent.iphone-selected {
-  transform: scale(1.08) translateY(-0.5rem);
+  transform: none;
 }
 
 .iphone-image {
@@ -405,7 +402,4 @@
 
 @media (max-width: 640px) {
   .iphone-frame { border-radius: 1.1rem; padding: 0.28rem; }
-  .iphone-prominent { transform: scale(1.04); }
-  .iphone-prominent:hover,
-  .iphone-prominent.iphone-selected { transform: scale(1.04) translateY(-0.35rem); }
 }
