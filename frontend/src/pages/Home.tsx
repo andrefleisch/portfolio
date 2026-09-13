@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -60,6 +60,7 @@ const pathStages = [
     number: "01",
     title: "Robotics & embedded systems",
     text: "Robotics taught me to experiment with physical systems, where software has to respond to real constraints.",
+    carry: "Learning through experimentation and immediate feedback.",
     icon: Cpu,
     accent: "vermilion",
   },
@@ -67,6 +68,7 @@ const pathStages = [
     number: "02",
     title: "Backend & full stack",
     text: "Backend development taught me to think in architecture, business rules, data and the contracts between them.",
+    carry: "Thinking in terms of structure, architecture and business rules.",
     icon: Layers3,
     accent: "cobalt",
   },
@@ -74,6 +76,7 @@ const pathStages = [
     number: "03",
     title: "Professional automation",
     text: "Test automation taught me to care about reliability, maintainability and the edge cases that shape a product.",
+    carry: "Looking for edge cases, reliability and failure modes.",
     icon: TestTube2,
     accent: "sage",
   },
@@ -81,6 +84,7 @@ const pathStages = [
     number: "04",
     title: "Native iOS & product",
     text: "Building native iOS apps is teaching me more about product decisions and the relationship between technology and the user.",
+    carry: "Thinking closer to the user and iterating on real product decisions.",
     icon: Code2,
     accent: "violet",
   },
@@ -124,22 +128,24 @@ function ExternalProjectLink({ href, children, testId }: { href: string; childre
 
 function SectionLabel({ number, children, testId, className = "", accentClassName = "text-vermilion" }: { number: string; children: React.ReactNode; testId: string; className?: string; accentClassName?: string }) {
   return (
-    <div data-testid={testId} className={`mb-8 flex items-center gap-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em] ${className || "text-slate"}`}>
+    <div data-testid={testId} data-reveal="metadata" className={`mb-8 flex items-center gap-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em] ${className || "text-slate"}`}>
       <span className={`font-mono ${accentClassName}`}>{number}</span>
-      <span className="h-px w-8 bg-slate-300" aria-hidden="true" />
+      <span className="section-rule h-px w-8 bg-slate-300" aria-hidden="true" />
       <span>{children}</span>
     </div>
   );
 }
 
-function GapScreen({ label, screen, prominent = false, selected, onSelect }: { label: string; screen: string; prominent?: boolean; selected: boolean; onSelect: () => void }) {
+function GapScreen({ label, screen, prominent = false, revealDelay, selected, onSelect }: { label: string; screen: string; prominent?: boolean; revealDelay: number; selected: boolean; onSelect: () => void }) {
   return (
     <button
       type="button"
       onClick={onSelect}
       data-testid={`gap-screenshot-${screen.toLowerCase().replaceAll(" ", "-")}-button`}
+      data-reveal="phone"
+      data-reveal-delay={revealDelay}
       aria-pressed={selected}
-      className={`group block w-full text-left transition-transform duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${selected ? "-translate-y-2" : "hover:-translate-y-1"}`}
+      className={`gap-screen-button group block w-full text-left transition-transform duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${selected ? "gap-screen-selected" : "hover:-translate-y-1"}`}
     >
       <div className={`iphone-frame ${prominent ? "iphone-prominent" : ""} ${selected ? "iphone-selected" : ""}`} data-testid={`gap-${screen.toLowerCase().replaceAll(" ", "-")}-image-slot`}>
         <img src={gapScreenshots[screen === "Home" ? "coreFlow" : screen === "Smart recommendation" ? "recommendation" : "context"]} alt={`${screen} screen from Gap`} className="iphone-image" loading="eager" decoding="sync" />
@@ -156,7 +162,100 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [caseStudyOpen, setCaseStudyOpen] = useState(false);
   const [activeScreen, setActiveScreen] = useState("Smart recommendation");
+  const [activeStage, setActiveStage] = useState(0);
+  const [activeNav, setActiveNav] = useState("hero");
   const [emailCopied, setEmailCopied] = useState(false);
+  const ambientLineRef = useRef<HTMLDivElement>(null);
+  const stageSelectionLockRef = useRef(0);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    root.classList.add("motion-ready");
+    if (reducedMotion) root.classList.add("motion-reduced");
+
+    const revealNodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (reducedMotion) {
+      revealNodes.forEach((node) => node.classList.add("is-revealed"));
+      return () => {
+        root.classList.remove("motion-ready", "motion-reduced");
+      };
+    }
+
+    const revealTargets = new Map<Element, HTMLElement[]>();
+    revealNodes.forEach((node) => {
+      const target = node.dataset.reveal === "mask" ? node.parentElement ?? node : node;
+      revealTargets.set(target, [...(revealTargets.get(target) ?? []), node]);
+    });
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          (revealTargets.get(entry.target) ?? []).forEach((node) => node.classList.add("is-revealed"));
+          revealObserver.unobserve(entry.target);
+        }
+      }),
+      { threshold: 0.01, rootMargin: "0px 0px -8% 0px" },
+    );
+    revealTargets.forEach((nodes, target) => {
+      const bounds = target.getBoundingClientRect();
+      if (bounds.top < window.innerHeight * 0.94 && bounds.bottom > 0) {
+        nodes.forEach((node) => node.classList.add("is-revealed"));
+      } else {
+        revealObserver.observe(target);
+      }
+    });
+
+    return () => {
+      revealObserver.disconnect();
+      root.classList.remove("motion-ready", "motion-reduced");
+    };
+  }, []);
+
+  useEffect(() => {
+    const sections = navItems
+      .map((item) => ({ id: item.href.slice(1), element: document.querySelector<HTMLElement>(item.href) }))
+      .filter((item): item is { id: string; element: HTMLElement } => Boolean(item.element));
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => {
+        if (entry.isIntersecting) setActiveNav(entry.target.id);
+      }),
+      { rootMargin: "-28% 0px -58% 0px", threshold: 0 },
+    );
+    sections.forEach(({ element }) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const stages = Array.from(document.querySelectorAll<HTMLElement>("[data-build-stage]"));
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => {
+        if (entry.isIntersecting && Date.now() > stageSelectionLockRef.current) {
+          setActiveStage(Number((entry.target as HTMLElement).dataset.buildStage ?? 0));
+        }
+      }),
+      { rootMargin: "-36% 0px -48% 0px", threshold: 0 },
+    );
+    stages.forEach((stage) => observer.observe(stage));
+    return () => observer.disconnect();
+  }, []);
+
+  const handleHeroPointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    if (event.pointerType === "touch" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 7;
+    const y = ((event.clientY - rect.top) / rect.height - 0.5) * 5;
+    ambientLineRef.current?.style.setProperty("transform", `translate(${x}px, ${y}px)`);
+  };
+
+  const handleHeroPointerLeave = () => {
+    ambientLineRef.current?.style.setProperty("transform", "translate(0, 0)");
+  };
+
+  const selectBuildStage = (index: number) => {
+    stageSelectionLockRef.current = Date.now() + 1200;
+    setActiveStage(index);
+  };
 
   const copyEmail = async () => {
     try {
@@ -181,7 +280,7 @@ export default function Home() {
           </a>
           <nav aria-label="Primary navigation" data-testid="desktop-navigation" className="hidden items-center gap-7 lg:flex">
             {navItems.map((item) => (
-              <a key={item.href} href={item.href} data-testid={item.testId} className="text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-slate transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">{item.label}</a>
+              <a key={item.href} href={item.href} data-testid={item.testId} aria-current={activeNav === item.href.slice(1) ? "page" : undefined} className={`nav-item text-[0.68rem] font-semibold uppercase tracking-[0.15em] transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${activeNav === item.href.slice(1) ? "nav-item-active text-ink" : "text-slate"}`}>{item.label}</a>
             ))}
           </nav>
           <div className="hidden items-center gap-4 md:flex">
@@ -197,7 +296,7 @@ export default function Home() {
           <nav aria-label="Mobile navigation" data-testid="mobile-navigation" className="border-t border-slate-200 bg-canvas px-5 py-5 md:hidden">
             <div className="flex flex-col gap-5">
               {navItems.map((item) => (
-                <a key={item.href} href={item.href} onClick={closeMobileMenu} data-testid={`mobile-${item.testId}`} className="text-sm font-semibold uppercase tracking-[0.13em] text-ink">{item.label}</a>
+                <a key={item.href} href={item.href} onClick={closeMobileMenu} data-testid={`mobile-${item.testId}`} aria-current={activeNav === item.href.slice(1) ? "page" : undefined} className={`nav-item text-sm font-semibold uppercase tracking-[0.13em] text-ink ${activeNav === item.href.slice(1) ? "nav-item-active" : ""}`}>{item.label}</a>
               ))}
               <div className="flex gap-5 border-t border-slate-200 pt-5">
                 <a href={githubUrl} target="_blank" rel="noreferrer" data-testid="mobile-github-link" className="text-sm font-semibold text-ink">GitHub <ArrowUpRight className="ml-1 inline size-3" /></a>
@@ -208,37 +307,37 @@ export default function Home() {
         )}
       </header>
 
-      <section id="hero" data-testid="hero-section" className="relative mx-auto flex min-h-[min(820px,100vh)] max-w-7xl items-end px-5 pb-20 pt-32 sm:px-8 sm:pb-24 lg:px-12 lg:pb-28">
-        <div className="pointer-events-none absolute right-24 top-40 hidden h-px w-48 bg-vermilion/50 lg:block" aria-hidden="true" />
+      <section id="hero" data-testid="hero-section" onPointerMove={handleHeroPointerMove} onPointerLeave={handleHeroPointerLeave} className="relative mx-auto flex min-h-[min(820px,100vh)] max-w-7xl items-end px-5 pb-20 pt-32 sm:px-8 sm:pb-24 lg:px-12 lg:pb-28">
+        <div ref={ambientLineRef} className="hero-ambient-line pointer-events-none absolute right-24 top-40 hidden h-px w-48 bg-vermilion/50 lg:block" aria-hidden="true" />
         <div className="relative z-10 max-w-6xl">
-          <div data-testid="hero-eyebrow" className="mb-8 flex items-center gap-3 text-[0.67rem] font-semibold uppercase tracking-[0.19em] text-slate"><CircleDot className="size-3 text-vermilion" /> Software Engineering Student · Developer · Builder</div>
-          <h1 data-testid="hero-title" className="max-w-6xl font-display text-[clamp(3.35rem,9vw,8.5rem)] font-medium leading-[0.91] tracking-[-0.055em] text-ink">André Gustavo <span className="text-vermilion">Reitz</span> Fleischfresser</h1>
+          <div data-testid="hero-eyebrow" data-reveal="metadata" className="mb-8 flex items-center gap-3 text-[0.67rem] font-semibold uppercase tracking-[0.19em] text-slate"><CircleDot className="size-3 text-vermilion" /> Software Engineering Student · Developer · Builder</div>
+          <h1 data-testid="hero-title" data-reveal="mask" className="max-w-6xl font-display text-[clamp(3.35rem,9vw,8.5rem)] font-medium leading-[0.91] tracking-[-0.055em] text-ink">André Gustavo <span className="text-vermilion">Reitz</span> Fleischfresser</h1>
           <div className="mt-10 grid max-w-4xl gap-8 border-t border-slate-300 pt-7 sm:grid-cols-[1fr_1.25fr] sm:items-start">
-            <p data-testid="hero-manifesto" className="max-w-xs text-lg font-medium leading-relaxed text-ink sm:text-xl">I enjoy building things, experimenting, and learning by doing.</p>
+            <p data-testid="hero-manifesto" data-reveal="copy" data-reveal-delay="90" className="max-w-xs text-lg font-medium leading-relaxed text-ink sm:text-xl">I enjoy building things, experimenting, and learning by doing.</p>
             <div>
-              <p data-testid="hero-credibility" className="mb-4 font-mono text-[0.65rem] font-semibold tracking-[0.13em] text-vermilion">Software Engineering @ PUCPR · iOS Automation QA @ Mitel</p>
-              <p data-testid="hero-description" className="max-w-lg text-sm leading-7 text-slate sm:text-base">I build software by experimenting, testing ideas, and learning through real projects — from robotics and embedded systems to backend applications, automation and native iOS products.</p>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <p data-testid="hero-credibility" data-reveal="metadata" data-reveal-delay="120" className="mb-4 font-mono text-[0.65rem] font-semibold tracking-[0.13em] text-vermilion">Software Engineering @ PUCPR · iOS Automation QA @ Mitel</p>
+              <p data-testid="hero-description" data-reveal="copy" data-reveal-delay="160" className="max-w-lg text-sm leading-7 text-slate sm:text-base">I build software by experimenting, testing ideas, and learning through real projects — from robotics and embedded systems to backend applications, automation and native iOS products.</p>
+              <div data-reveal="copy" data-reveal-delay="220" className="mt-8 flex flex-wrap gap-3">
                 <a href="#gap-centerpiece" data-testid="hero-view-work-button" className="group inline-flex items-center gap-3 bg-ink px-5 py-3.5 text-xs font-bold uppercase tracking-[0.13em] text-canvas transition-colors hover:bg-vermilion focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">View my work <ArrowDown className="size-4 transition-transform group-hover:translate-y-1" /></a>
                 <a href={githubUrl} target="_blank" rel="noreferrer" data-testid="hero-github-button" className="inline-flex items-center gap-2 border border-slate-300 px-5 py-3.5 text-xs font-bold uppercase tracking-[0.13em] text-ink transition-colors hover:border-ink hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">GitHub <ArrowUpRight className="size-4" /></a>
                 <a href={linkedinUrl} target="_blank" rel="noreferrer" data-testid="hero-linkedin-button" className="inline-flex items-center gap-2 border border-slate-300 px-5 py-3.5 text-xs font-bold uppercase tracking-[0.13em] text-ink transition-colors hover:border-ink hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">LinkedIn <ArrowUpRight className="size-4" /></a>
               </div>
             </div>
           </div>
-          <div className="mt-20 flex items-center gap-3 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate"><span className="h-10 w-px bg-vermilion" aria-hidden="true" /> Follow the thread: experimentation → engineering → reliability → product thinking</div>
+          <div data-reveal="copy" data-reveal-delay="260" className="mt-20 flex items-center gap-3 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate"><span className="h-10 w-px bg-vermilion" aria-hidden="true" /> Follow the thread: experimentation → engineering → reliability → product thinking</div>
         </div>
       </section>
 
-      <section id="gap-centerpiece" data-testid="gap-section" className="bg-ink text-canvas">
+      <section id="gap-centerpiece" data-testid="gap-section" data-color-section="dark" className="dark-section bg-ink text-canvas">
         <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36">
           <SectionLabel number="01" testId="gap-section-label">Flagship project</SectionLabel>
           <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
             <div>
-              <p data-testid="gap-project-kicker" className="mb-5 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-vermilion">Native iOS · Product experiment</p>
-              <h2 data-testid="gap-project-title" className="max-w-xl font-display text-6xl font-medium leading-[0.92] tracking-[-0.045em] sm:text-8xl">Gap<span className="text-vermilion">.</span></h2>
-              <p data-testid="gap-learning-dimension" className="mt-4 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-white/45">Product thinking · Iteration</p>
-              <p data-testid="gap-project-tagline" className="mt-8 max-w-md text-xl leading-relaxed text-white/75 sm:text-2xl">How much time do I have right now?</p>
-              <p data-testid="gap-project-description" className="mt-7 max-w-lg text-sm leading-7 text-white/60 sm:text-base">Gap helps people find tasks that realistically fit their current amount of free time, context and priorities — instead of presenting another large to-do list.</p>
+              <p data-testid="gap-project-kicker" data-reveal="metadata" className="mb-5 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-vermilion">Native iOS · Product experiment</p>
+              <h2 data-testid="gap-project-title" data-reveal="mask" className="max-w-xl font-display text-6xl font-medium leading-[0.92] tracking-[-0.045em] sm:text-8xl">Gap<span className="text-vermilion">.</span></h2>
+              <p data-testid="gap-learning-dimension" data-reveal="metadata" data-reveal-delay="100" className="mt-4 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-white/45">Product thinking · Iteration</p>
+              <p data-testid="gap-project-tagline" data-reveal="copy" data-reveal-delay="120" className="mt-8 max-w-md text-xl leading-relaxed text-white/75 sm:text-2xl">How much time do I have right now?</p>
+              <p data-testid="gap-project-description" data-reveal="copy" data-reveal-delay="160" className="mt-7 max-w-lg text-sm leading-7 text-white/60 sm:text-base">Gap helps people find tasks that realistically fit their current amount of free time, context and priorities — instead of presenting another large to-do list.</p>
               <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-white/50"><span>Swift</span><span>SwiftUI</span><span>SwiftData</span><span>Local persistence</span></div>
               <div className="mt-10 flex flex-wrap items-center gap-5">
                 <a href={projectLinks.gap} target="_blank" rel="noreferrer" data-testid="gap-view-project-button" className="group inline-flex items-center gap-2 bg-canvas px-5 py-3.5 text-xs font-bold uppercase tracking-[0.13em] text-ink transition-colors hover:bg-vermilion hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-canvas">View project <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></a>
@@ -247,9 +346,9 @@ export default function Home() {
             </div>
             <div className="relative min-h-[25rem] sm:min-h-[34rem] lg:pt-8">
               <div className="grid grid-cols-3 items-end gap-2 sm:gap-5">
-                <GapScreen label="START WITH TIME" screen="Home" selected={activeScreen === "Home"} onSelect={() => setActiveScreen("Home")} />
-                <div className="pb-9"><GapScreen label="SMART RECOMMENDATION" screen="Smart recommendation" prominent selected={activeScreen === "Smart recommendation"} onSelect={() => setActiveScreen("Smart recommendation")} /></div>
-                <div className="pb-20"><GapScreen label="CONTEXT & PRIORITY" screen="New task" selected={activeScreen === "New task"} onSelect={() => setActiveScreen("New task")} /></div>
+                <GapScreen label="START WITH TIME" screen="Home" revealDelay={100} selected={activeScreen === "Home"} onSelect={() => setActiveScreen("Home")} />
+                <div className="pb-9"><GapScreen label="SMART RECOMMENDATION" screen="Smart recommendation" revealDelay={0} prominent selected={activeScreen === "Smart recommendation"} onSelect={() => setActiveScreen("Smart recommendation")} /></div>
+                <div className="pb-20"><GapScreen label="CONTEXT & PRIORITY" screen="New task" revealDelay={180} selected={activeScreen === "New task"} onSelect={() => setActiveScreen("New task")} /></div>
               </div>
             </div>
           </div>
@@ -266,19 +365,19 @@ export default function Home() {
 
       <section id="featured-projects" data-testid="featured-projects-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36">
         <SectionLabel number="02" testId="featured-projects-label">Selected work</SectionLabel>
-        <div className="mb-16 grid gap-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end"><h2 data-testid="featured-projects-title" className="max-w-2xl font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-7xl">Selected work.</h2><p data-testid="featured-projects-intro" className="max-w-md text-sm leading-7 text-slate">The work below follows that thread — from architecture and business rules to collaboration and physical experimentation. Each project is a different way of learning by making.</p></div>
+        <div className="mb-16 grid gap-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end"><h2 data-testid="featured-projects-title" data-reveal="mask" className="max-w-2xl font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-7xl">Selected work.</h2><p data-testid="featured-projects-intro" data-reveal="copy" data-reveal-delay="100" className="max-w-md text-sm leading-7 text-slate">The work below follows that thread — from architecture and business rules to collaboration and physical experimentation. Each project is a different way of learning by making.</p></div>
         <div className="divide-y divide-slate-200 border-y border-slate-200">
-          <article data-testid="helpdesk-project" className="group grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.72fr_1fr_0.55fr] lg:gap-12">
+          <article data-testid="helpdesk-project" data-project-row className="project-row group grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.72fr_1fr_0.55fr] lg:gap-12">
             <div><p data-testid="helpdesk-category" className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-cobalt">Full stack · backend architecture</p><h3 data-testid="helpdesk-title" className="mt-4 font-display text-4xl leading-none sm:text-5xl">HelpDesk</h3><p data-testid="helpdesk-learning-dimension" className="mt-3 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.15em] text-slate">Architecture · Business logic</p>{projectImages.helpDesk && <img src={projectImages.helpDesk} alt="HelpDesk project" data-testid="helpdesk-project-image" className="mt-8 aspect-[4/3] w-full object-cover object-center" />}</div>
             <div><p data-testid="helpdesk-description" className="max-w-lg text-sm leading-7 text-slate">A help desk system built around authentication, role-based authorization, ticket CRUD, assignment, status and priority workflows, comments, filtering, pagination, dashboard, validation, automated tests and API documentation.</p><p data-testid="helpdesk-emphasis" className="mt-5 text-sm font-semibold leading-6 text-ink">A project about business logic, architecture, testing and maintainability.</p></div>
             <div className="flex flex-col justify-between gap-7 lg:items-end"><div data-testid="helpdesk-technologies" className="text-right font-mono text-[0.63rem] uppercase leading-6 tracking-[0.12em] text-slate">TypeScript · Node.js<br />Express · PostgreSQL · Prisma<br />Zod · JWT · Jest · Swagger · React</div><ExternalProjectLink href={projectLinks.helpDesk} testId="helpdesk-repository-link">View repository</ExternalProjectLink></div>
           </article>
-          <article data-testid="elder-watch-project" className="group grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.72fr_1fr_0.55fr] lg:gap-12">
+          <article data-testid="elder-watch-project" data-project-row className="project-row group grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.72fr_1fr_0.55fr] lg:gap-12">
             <div><p data-testid="elder-watch-category" className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-vermilion">Collaborative university project · PUCPR</p><h3 data-testid="elder-watch-title" className="mt-4 font-display text-4xl leading-none sm:text-5xl">Elder-Watch</h3><p data-testid="elder-watch-learning-dimension" className="mt-3 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.15em] text-slate">Experimentation · Physical systems</p>{projectImages.elderWatch && <img src={projectImages.elderWatch} alt="Elder-Watch prototype" data-testid="elder-watch-project-image" className="mt-8 aspect-[4/3] w-full object-cover object-center" />}</div>
             <div><p data-testid="elder-watch-description" className="max-w-lg text-sm leading-7 text-slate">An ESP32 prototype focused on elderly safety, exploring fall detection using motion data, an emergency button, sound sensing, Telegram alerts, medication reminders and a local monitoring dashboard.</p><p data-testid="elder-watch-emphasis" className="mt-5 text-sm font-semibold leading-6 text-ink">Experimentation at the intersection of hardware and software.</p></div>
             <div className="flex flex-col justify-between gap-7 lg:items-end"><div data-testid="elder-watch-technologies" className="text-right font-mono text-[0.63rem] uppercase leading-6 tracking-[0.12em] text-slate">ESP32 · MPU6050<br />Sensors · Telegram<br />Local monitoring</div><ExternalProjectLink href={projectLinks.elderWatch} testId="elder-watch-repository-link">View repository</ExternalProjectLink></div>
           </article>
-          <article data-testid="promosearch-project" className="group grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.72fr_1fr_0.55fr] lg:gap-12">
+          <article data-testid="promosearch-project" data-project-row className="project-row group grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.72fr_1fr_0.55fr] lg:gap-12">
             <div><p data-testid="promosearch-category" className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-sage">Collaborative university project · PUCPR</p><h3 data-testid="promosearch-title" className="mt-4 font-display text-4xl leading-none sm:text-5xl">PromoSearch</h3><p data-testid="promosearch-learning-dimension" className="mt-3 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.15em] text-slate">Collaboration · Full stack</p>{projectImages.promoSearch && <img src={projectImages.promoSearch} alt="PromoSearch project" data-testid="promosearch-project-image" className="mt-8 aspect-[4/3] w-full object-cover object-center" />}</div>
             <div><p data-testid="promosearch-description" className="max-w-lg text-sm leading-7 text-slate">A marketplace for local promotions where stores publish offers and customers discover nearby deals through roles, moderation workflows, relational data, browser geolocation, maps and radius/category filtering.</p><p data-testid="promosearch-emphasis" className="mt-5 text-sm font-semibold leading-6 text-ink">A study in turning local context into useful discovery.</p></div>
             <div className="flex flex-col justify-between gap-7 lg:items-end"><div data-testid="promosearch-technologies" className="text-right font-mono text-[0.63rem] uppercase leading-6 tracking-[0.12em] text-slate">PHP · MySQL · JavaScript<br />Leaflet · OpenStreetMap<br />Geolocation · Marketplace</div><ExternalProjectLink href={projectLinks.promoSearch} testId="promosearch-repository-link">View repository</ExternalProjectLink></div>
@@ -287,7 +386,7 @@ export default function Home() {
       </section>
 
       <section data-testid="other-projects-section" className="border-y border-slate-200 bg-surface-alt">
-        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-12"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]"><div><SectionLabel number="03" testId="other-projects-label">Other projects</SectionLabel><p data-testid="other-projects-intro" className="max-w-xs text-sm leading-7 text-slate">Smaller experiments, collaborations and iterations that keep the learning moving.</p></div><div className="divide-y divide-slate-300 border-t border-slate-300">{smallerProjects.map((project, index) => <a key={project.title} href={project.link} target="_blank" rel="noreferrer" data-testid={`other-project-${index + 1}-link`} className="group grid gap-3 py-6 transition-colors hover:text-vermilion sm:grid-cols-[0.4fr_1fr_auto] sm:items-start sm:gap-8"><span data-testid={`other-project-${index + 1}-discipline`} className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-slate">{project.discipline}</span><span><span data-testid={`other-project-${index + 1}-title`} className="block font-display text-2xl text-ink transition-colors group-hover:text-vermilion">{project.title}</span><span data-testid={`other-project-${index + 1}-description`} className="mt-1 block max-w-lg text-sm leading-6 text-slate">{project.description}</span></span><ArrowUpRight aria-hidden="true" className="hidden size-5 text-ink transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 sm:block" /></a>)}</div></div></div>
+        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-12"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]"><div><SectionLabel number="03" testId="other-projects-label">Other projects</SectionLabel><p data-testid="other-projects-intro" className="max-w-xs text-sm leading-7 text-slate">Smaller experiments, collaborations and iterations that keep the learning moving.</p></div><div className="divide-y divide-slate-300 border-t border-slate-300">{smallerProjects.map((project, index) => <a key={project.title} href={project.link} target="_blank" rel="noreferrer" data-testid={`other-project-${index + 1}-link`} className="other-project-link group grid gap-3 py-6 transition-colors hover:text-vermilion sm:grid-cols-[0.4fr_1fr_auto] sm:items-start sm:gap-8"><span data-testid={`other-project-${index + 1}-discipline`} className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-slate">{project.discipline}</span><span><span data-testid={`other-project-${index + 1}-title`} className="block font-display text-2xl text-ink transition-colors group-hover:text-vermilion">{project.title}</span><span data-testid={`other-project-${index + 1}-description`} className="mt-1 block max-w-lg text-sm leading-6 text-slate">{project.description}</span></span><ArrowUpRight aria-hidden="true" className="hidden size-5 text-ink transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 sm:block" /></a>)}</div></div></div>
       </section>
 
       <section id="experience" data-testid="experience-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36">
@@ -296,14 +395,14 @@ export default function Home() {
       </section>
 
       <section id="how-i-build" data-testid="how-i-build-section" className="bg-surface-alt">
-        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><SectionLabel number="05" testId="how-i-build-label">How I build</SectionLabel><div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-24"><div><h2 data-testid="how-i-build-title" className="max-w-md font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-7xl">I learn best by <span className="text-vermilion">building.</span></h2><p data-testid="how-i-build-intro" className="mt-7 max-w-sm text-sm leading-7 text-slate">Every project gives me something new to understand, test and carry into the next one. I learn best by building real things, listening closely to what they teach me, and carrying that experience forward.</p></div><div className="relative border-l border-slate-300">{pathStages.map((stage) => { const Icon = stage.icon; return <div key={stage.number} data-testid={`build-stage-${stage.number}`} className="relative grid gap-4 pb-10 pl-7 last:pb-0 sm:grid-cols-[7rem_1fr] sm:gap-7 sm:pl-10"><span className="absolute -left-[0.32rem] top-1 size-2.5 rounded-full border-2 border-surface-alt bg-vermilion" aria-hidden="true" /><div className="flex items-center gap-3 text-vermilion"><span data-testid={`build-stage-${stage.number}-number`} className="font-mono text-[0.68rem]">{stage.number}</span><Icon className="size-4" aria-hidden="true" /></div><div><h3 data-testid={`build-stage-${stage.number}-title`} className="font-display text-2xl text-ink">{stage.title}</h3><p data-testid={`build-stage-${stage.number}-description`} className="mt-2 max-w-lg text-sm leading-6 text-slate">{stage.text}</p></div></div>; })}</div></div></div>
+        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><SectionLabel number="05" testId="how-i-build-label">How I build</SectionLabel><div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-24"><div><h2 data-testid="how-i-build-title" data-reveal="mask" className="max-w-md font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-7xl">I learn best by <span className="text-vermilion">building.</span></h2><p data-testid="how-i-build-intro" data-reveal="copy" data-reveal-delay="100" className="mt-7 max-w-sm text-sm leading-7 text-slate">Every project gives me something new to understand, test and carry into the next one. I learn best by building real things, listening closely to what they teach me, and carrying that experience forward.</p></div><div className="relative border-l border-slate-300"><span data-testid="build-progress-line" className="build-progress-line" style={{ height: `${((activeStage + 1) / pathStages.length) * 100}%` }} aria-hidden="true" />{pathStages.map((stage, index) => { const Icon = stage.icon; const active = activeStage === index; return <button type="button" key={stage.number} data-testid={`build-stage-${stage.number}`} data-build-stage={index} aria-pressed={active} onClick={() => selectBuildStage(index)} className={`build-stage-button relative grid w-full gap-4 pb-10 pl-7 text-left last:pb-0 sm:grid-cols-[7rem_1fr] sm:gap-7 sm:pl-10 ${active ? "is-active" : ""}`}><span className="build-stage-dot absolute -left-[0.32rem] top-1 size-2.5 rounded-full border-2 border-surface-alt bg-vermilion" aria-hidden="true" /><div className="flex items-center gap-3 text-vermilion"><span data-testid={`build-stage-${stage.number}-number`} className="font-mono text-[0.68rem]">{stage.number}</span><Icon className="size-4" aria-hidden="true" /></div><div><h3 data-testid={`build-stage-${stage.number}-title`} className="font-display text-2xl text-ink">{stage.title}</h3><p data-testid={`build-stage-${stage.number}-description`} className="mt-2 max-w-lg text-sm leading-6 text-slate">{stage.text}</p><div className="mt-2 min-h-[2.8rem] overflow-hidden"><p data-testid={`build-stage-${stage.number}-carry`} className="build-stage-carry max-w-lg text-sm leading-6 text-vermilion">{stage.carry}</p></div></div></button>; })}</div></div></div>
       </section>
 
       <section data-testid="milestones-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32"><SectionLabel number="06" testId="milestones-label">Milestones</SectionLabel><div className="mb-14 grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-end"><h2 data-testid="milestones-title" className="max-w-2xl font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-7xl">More than projects.</h2><p data-testid="milestones-intro" className="max-w-md text-sm leading-7 text-slate">A couple of milestones that shaped how I learn, lead and build.</p></div><div className="divide-y divide-slate-200 border-y border-slate-200"><article data-testid="milestone-robotics" className="grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.22fr_0.62fr_1fr] lg:gap-12"><div data-testid="milestone-robotics-number" className="font-mono text-[0.68rem] font-semibold tracking-[0.16em] text-vermilion">01</div><div><h3 data-testid="milestone-robotics-title" className="font-display text-4xl leading-none text-ink sm:text-5xl">Robotics</h3><p data-testid="milestone-robotics-achievement" className="mt-4 font-display text-2xl leading-tight text-ink">2× 2nd place at OBR</p></div><div><p data-testid="milestone-robotics-description" className="max-w-xl text-sm leading-7 text-slate">I worked as a robotics instructor and mentor during my internship, helping prepare and guide a team for the Brazilian Robotics Olympiad.</p><div className="mt-6 grid gap-3 border-t border-slate-200 pt-5 text-sm font-semibold text-ink sm:grid-cols-2"><span data-testid="milestone-robotics-pista"><span className="mr-2 text-vermilion">/</span>2nd place — OBR Pista</span><span data-testid="milestone-robotics-artistica"><span className="mr-2 text-vermilion">/</span>2nd place — OBR Artística</span><span data-testid="milestone-robotics-national"><span className="mr-2 text-vermilion">/</span>Qualified for the national stage in OBR Artística</span></div></div></article><article data-testid="milestone-academic" className="grid gap-8 py-10 sm:py-14 lg:grid-cols-[0.22fr_0.62fr_1fr] lg:gap-12"><div data-testid="milestone-academic-number" className="font-mono text-[0.68rem] font-semibold tracking-[0.16em] text-vermilion">02</div><div><h3 data-testid="milestone-academic-title" className="font-display text-4xl leading-none text-ink sm:text-5xl">Academic</h3><p data-testid="milestone-academic-achievement" className="mt-4 font-display text-2xl leading-tight text-ink">IRA 91 / 100</p></div><div className="flex items-start"><p data-testid="milestone-academic-description" className="text-sm font-semibold leading-7 text-slate">Software Engineering · PUCPR</p></div></article></div></section>
 
-      <section data-testid="exploring-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]"><div><SectionLabel number="07" testId="exploring-label">Currently exploring</SectionLabel><h2 data-testid="exploring-title" className="max-w-sm font-display text-4xl leading-none tracking-[-0.04em] sm:text-5xl">What I’m exploring now.</h2><p data-testid="exploring-intro" className="mt-6 max-w-sm text-sm leading-7 text-slate">Where previous projects lead, and what I’m curious about next.</p></div><div className="grid border-t border-slate-300 sm:grid-cols-2">{["Swift & SwiftUI", "Native iOS development", "Product development", "Software architecture", "Cloud architecture", "Automated testing"].map((item, index) => <div key={item} data-testid={`exploring-item-${index + 1}`} className="flex items-center gap-4 border-b border-slate-200 py-5 text-sm font-semibold text-ink"><span className="font-mono text-[0.62rem] text-vermilion">0{index + 1}</span>{item}</div>)}</div></div></section>
+      <section data-testid="exploring-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]"><div><SectionLabel number="07" testId="exploring-label">Currently exploring</SectionLabel><h2 data-testid="exploring-title" data-reveal="mask" className="max-w-sm font-display text-4xl leading-none tracking-[-0.04em] sm:text-5xl">What I’m exploring now.</h2><p data-testid="exploring-intro" data-reveal="copy" data-reveal-delay="100" className="mt-6 max-w-sm text-sm leading-7 text-slate">Where previous projects lead, and what I’m curious about next.</p></div><div className="grid border-t border-slate-300" data-reveal="copy" data-reveal-delay="140"><div className="exploring-rule" aria-hidden="true" />{["Swift & SwiftUI", "Native iOS development", "Product development", "Software architecture", "Cloud architecture", "Automated testing"].map((item, index) => <div key={item} data-testid={`exploring-item-${index + 1}`} className="flex items-center gap-4 border-b border-slate-200 py-5 text-sm font-semibold text-ink"><span className="font-mono text-[0.62rem] text-vermilion">0{index + 1}</span>{item}</div>)}</div></div></section>
 
-      <section id="contact" data-testid="contact-section" className="border-b border-white/10 bg-ink text-canvas"><div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><SectionLabel number="08" testId="contact-label" className="text-cobalt" accentClassName="text-cobalt">Contact</SectionLabel><div className="grid gap-12 lg:grid-cols-[1fr_0.8fr] lg:items-end"><div><h2 data-testid="contact-title" className="max-w-2xl font-display text-6xl font-medium leading-[0.9] tracking-[-0.05em] text-canvas sm:text-8xl">Have a good question<span className="text-cobalt">?</span></h2><p data-testid="contact-description" className="mt-8 max-w-md text-base leading-7 text-white/70">I’m always interested in thoughtful conversations about products, engineering and what we can learn by making something real.</p></div><div className="border-t border-white/20 pt-6"><p data-testid="contact-location" className="mb-6 flex items-center gap-2 text-sm text-white/65"><MapPin className="size-4 text-cobalt" /> Curitiba, Paraná, Brazil</p><div className="flex flex-col gap-4"><a href={`mailto:${email}`} data-testid="contact-email-link" className="group flex items-center justify-between border-b border-white/30 pb-3 text-base font-semibold transition-colors hover:border-cobalt hover:text-cobalt"><span className="flex items-center gap-3"><Mail className="size-4 text-cobalt" />{email}</span><ArrowUpRight className="size-4 text-cobalt transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></a><button type="button" onClick={copyEmail} data-testid="copy-email-button" className="flex items-center gap-3 self-start text-xs font-bold uppercase tracking-[0.14em] text-white/70 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">{emailCopied ? <Check className="size-4 text-cobalt" /> : <Copy className="size-4 text-cobalt" />}{emailCopied ? "Copied" : "Copy email"}</button><div className="flex gap-5 pt-3"><a href={githubUrl} target="_blank" rel="noreferrer" data-testid="contact-github-link" className="flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">GitHub <ArrowUpRight className="size-3 text-cobalt" /></a><a href={linkedinUrl} target="_blank" rel="noreferrer" data-testid="contact-linkedin-link" className="flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">LinkedIn <ArrowUpRight className="size-3 text-cobalt" /></a></div></div></div></div></div></section>
+      <section id="contact" data-testid="contact-section" data-color-section="dark" className="dark-section border-b border-white/10 bg-ink text-canvas"><div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><SectionLabel number="08" testId="contact-label" className="text-cobalt" accentClassName="text-cobalt">Contact</SectionLabel><div className="grid gap-12 lg:grid-cols-[1fr_0.8fr] lg:items-end"><div><h2 data-testid="contact-title" className="max-w-2xl font-display text-6xl font-medium leading-[0.9] tracking-[-0.05em] text-canvas sm:text-8xl">Have a good question<span className="text-cobalt">?</span></h2><p data-testid="contact-description" className="mt-8 max-w-md text-base leading-7 text-white/70">I’m always interested in thoughtful conversations about products, engineering and what we can learn by making something real.</p></div><div className="border-t border-white/20 pt-6"><p data-testid="contact-location" className="mb-6 flex items-center gap-2 text-sm text-white/65"><MapPin className="size-4 text-cobalt" /> Curitiba, Paraná, Brazil</p><div className="flex flex-col gap-4"><a href={`mailto:${email}`} data-testid="contact-email-link" className="group flex items-center justify-between border-b border-white/30 pb-3 text-base font-semibold transition-colors hover:border-cobalt hover:text-cobalt"><span className="flex items-center gap-3"><Mail className="size-4 text-cobalt" />{email}</span><ArrowUpRight className="size-4 text-cobalt transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></a><button type="button" onClick={copyEmail} data-testid="copy-email-button" className="flex items-center gap-3 self-start text-xs font-bold uppercase tracking-[0.14em] text-white/70 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">{emailCopied ? <Check className="size-4 text-cobalt" /> : <Copy className="size-4 text-cobalt" />}{emailCopied ? "Copied" : "Copy email"}</button><div className="flex gap-5 pt-3"><a href={githubUrl} target="_blank" rel="noreferrer" data-testid="contact-github-link" className="flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">GitHub <ArrowUpRight className="size-3 text-cobalt" /></a><a href={linkedinUrl} target="_blank" rel="noreferrer" data-testid="contact-linkedin-link" className="flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">LinkedIn <ArrowUpRight className="size-3 text-cobalt" /></a></div></div></div></div></div></section>
 
       <footer data-testid="site-footer" className="bg-ink text-white/55"><div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-7 text-[0.65rem] uppercase tracking-[0.14em] sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12"><span data-testid="footer-name">André Gustavo Reitz Fleischfresser</span><span data-testid="footer-note" className="flex items-center gap-2"><Terminal className="size-3 text-vermilion" /> Built by learning through doing</span></div></footer>
     </main>
