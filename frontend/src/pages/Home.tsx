@@ -146,8 +146,10 @@ function GapScreen({ label, screen, imageAlt, prominent = false, revealDelay, se
       aria-pressed={selected}
       className="gap-screen-button group block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
     >
-      <div className={`iphone-frame ${prominent ? "iphone-prominent" : ""} ${selected ? "iphone-selected" : ""}`} data-testid={`gap-${screen.toLowerCase().replaceAll(" ", "-")}-image-slot`}>
-        <img src={gapScreenshots[screen === "Home" ? "coreFlow" : screen === "Smart recommendation" ? "recommendation" : "context"]} alt={imageAlt} className="iphone-image" loading="eager" decoding="sync" />
+      <div className="gap-device-stage">
+        <div className={`iphone-frame ${selected ? "iphone-selected" : ""}`} data-testid={`gap-${screen.toLowerCase().replaceAll(" ", "-")}-image-slot`}>
+          <img src={gapScreenshots[screen === "Home" ? "coreFlow" : screen === "Smart recommendation" ? "recommendation" : "context"]} alt={imageAlt} className="iphone-image" loading="eager" decoding="sync" />
+        </div>
       </div>
       <div className={`mt-3 flex items-center justify-between gap-2 text-[0.64rem] font-semibold uppercase tracking-[0.12em] ${prominent ? "text-white/85" : "text-white/60"}`}>
         <span data-testid={`gap-screenshot-${screen.toLowerCase().replaceAll(" ", "-")}-label`}>{label}</span>
@@ -353,7 +355,7 @@ export default function Home() {
                 <button type="button" onClick={() => setCaseStudyOpen((open) => !open)} data-testid="gap-case-study-toggle" aria-expanded={caseStudyOpen} className="group inline-flex items-center gap-2 border-b border-white/35 pb-1 text-xs font-bold uppercase tracking-[0.13em] text-white transition-colors hover:border-vermilion hover:text-vermilion focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-canvas">{caseStudyOpen ? t.gap.closeCaseStudy : t.gap.readCaseStudy}<ChevronDown className={`size-4 transition-transform duration-300 ${caseStudyOpen ? "rotate-180" : ""}`} /></button>
               </div>
             </div>
-            <div className="relative min-h-[25rem] sm:min-h-[34rem] lg:pt-8">
+            <div className="relative lg:pt-8">
               <div className="gap-phone-grid">
                 <div className="gap-phone-slot gap-phone-slot-supporting">
                   <GapScreen label={t.gap.screens[0]} imageAlt={t.gap.screenAlts[0]} screen="Home" revealDelay={100} selected={activeScreen === "Home"} onSelect={() => setActiveScreen("Home")} />
