@@ -214,7 +214,7 @@ export default function Home() {
           <div data-testid="hero-eyebrow" className="mb-8 flex items-center gap-3 text-[0.67rem] font-semibold uppercase tracking-[0.19em] text-slate"><CircleDot className="size-3 text-vermilion" /> Software Engineering Student · Developer · Builder</div>
           <h1 data-testid="hero-title" className="max-w-6xl font-display text-[clamp(3.35rem,9vw,8.5rem)] font-medium leading-[0.91] tracking-[-0.055em] text-ink">André Gustavo <span className="text-vermilion">Reitz</span> Fleischfresser</h1>
           <div className="mt-10 grid max-w-4xl gap-8 border-t border-slate-300 pt-7 sm:grid-cols-[1fr_1.25fr] sm:items-start">
-            <p data-testid="hero-manifesto" className="max-w-xs text-lg font-medium leading-relaxed text-ink sm:text-xl">I like building things, experimenting, and learning by doing.</p>
+            <p data-testid="hero-manifesto" className="max-w-xs text-lg font-medium leading-relaxed text-ink sm:text-xl">I enjoy building things, experimenting, and learning by doing.</p>
             <div>
               <p data-testid="hero-credibility" className="mb-4 font-mono text-[0.65rem] font-semibold tracking-[0.13em] text-vermilion">Software Engineering @ PUCPR · iOS Automation QA @ Mitel</p>
               <p data-testid="hero-description" className="max-w-lg text-sm leading-7 text-slate sm:text-base">I build software by experimenting, testing ideas, and learning through real projects — from robotics and embedded systems to backend applications, automation and native iOS products.</p>
