@@ -84,7 +84,7 @@ export const portfolioCopy = {
       period: "Current role",
       title: "iOS Automation QA Intern",
       description: "I work with automated testing for a production iOS application. The work has taught me to think about reliability, maintainability and collaboration in addition to simply making software work.",
-      skills: ["Appium & XCUITest", "Cucumber", "Accessibility identifiers", "UI & end-to-end automation", "Regression testing & debugging", "Git & collaborative development"],
+      skills: ["Appium & XCUITest", "Cucumber", "Playwright", "UI & end-to-end automation", "Regression testing & debugging", "Git & collaborative development"],
     },
     how: {
       label: "How I build",
@@ -215,7 +215,7 @@ export const portfolioCopy = {
       period: "Cargo atual",
       title: "Estagiário em QA de Automação iOS",
       description: "Trabalho com testes automatizados para uma aplicação iOS em produção. Essa experiência me ensinou a pensar em confiabilidade, manutenibilidade e colaboração, além de simplesmente fazer o software funcionar.",
-      skills: ["Appium & XCUITest", "Cucumber", "Identificadores de acessibilidade", "Automação de UI & ponta a ponta", "Testes de regressão & depuração", "Git & desenvolvimento colaborativo"],
+      skills: ["Appium & XCUITest", "Cucumber", "Playwright", "Automação de UI & end-to-end", "Testes de regressão & depuração", "Git & desenvolvimento colaborativo"],
     },
     how: {
       label: "Como eu construo",
