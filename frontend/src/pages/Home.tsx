@@ -43,11 +43,10 @@ const projectImages: Record<"helpDesk" | "elderWatch" | "promoSearch", string | 
   promoSearch: undefined,
 };
 
-// Drop final iPhone screenshot URLs here; the existing device frames will render them without layout changes.
 const gapScreenshots: Record<"coreFlow" | "context" | "recommendation", string | undefined> = {
-  coreFlow: "https://customer-assets-v7afamib.emergentagent.net/job_andre-products/artifacts/qvfooj6b_home.webp",
-  context: "https://customer-assets-v7afamib.emergentagent.net/job_andre-products/artifacts/1v9mc6j3_Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20Max%20-%202026-09-07%20at%2023.44.34.webp",
-  recommendation: "https://customer-assets-v7afamib.emergentagent.net/job_andre-products/artifacts/vi0pzsrh_Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20Max%20-%202026-09-07%20at%2023.43.01.webp",
+  coreFlow: "/gap-home.webp",
+  context: "/gap-task.webp",
+  recommendation: "/gap-recommendation.webp",
 };
 
 const navItems = [
